@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 import { Scanner } from './scanner';
 import { DB } from './db';
+import { Selector } from './selector';
 
 export class Core {
     private workspace: vscode.WorkspaceFolder | undefined;
@@ -22,7 +23,8 @@ export class Core {
         });
 
         const selectUseCommand = vscode.commands.registerCommand('extension.selectUse', () => {
-
+            const selector = new Selector();
+            selector.insertUseSelection('waaa');
         });
 
         this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand);

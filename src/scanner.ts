@@ -27,16 +27,16 @@ export class Scanner {
                 return console.log(err);
             }
 
-            const exportMatches = data.match(/our @EXPORT(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
-            const exportOKMatches = data.match(/our @EXPORT_OK(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
+            const exportMatches = data.match(/@EXPORT(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
+            const exportOKMatches = data.match(/@EXPORT_OK(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
 
             if (exportMatches) {
-                const subs: string[] = exportMatches[0].replace(/our @EXPORT(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
+                const subs: string[] = exportMatches[0].replace(/@EXPORT(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
                 subs.forEach(sub => DB.add(sub, file, workspace));
             }
 
             if (exportOKMatches) {
-                const subs: string[] = exportOKMatches[0].replace(/our @EXPORT_OK(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
+                const subs: string[] = exportOKMatches[0].replace(/@EXPORT_OK(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
                 subs.forEach(sub => DB.add(sub, file, workspace));
             }
         });
