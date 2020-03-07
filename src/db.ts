@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 export interface ImportObject {
     name: string,
     file: vscode.Uri,
-    workspace: vscode.WorkspaceFolder
+    workspace: vscode.WorkspaceFolder | undefined
 }
 
 export class DB {
@@ -13,17 +13,19 @@ export class DB {
         return this.imports;
     }
 
-    public static add(name: string, file: any, workspace: vscode.WorkspaceFolder): void {
+    public static add(name: string, file: any, workspace: vscode.WorkspaceFolder | undefined): void {
 
         name = name.trim();
 
-        if (name === '' || name.length === 1) return;
+        if (name === '' || name.length === 1) {
+            return;
+        }
 
         const obj: ImportObject = {
             name,
             file,
             workspace
-        }
+        };
 
         const exists = this.imports.findIndex(m => m.name === obj.name && m.file.fsPath === file.fsPath);
 

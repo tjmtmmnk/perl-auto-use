@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { Scanner } from './scanner';
+import { DB } from './db';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -18,10 +20,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World!');
+		const scanner = new Scanner(vscode.workspace.getConfiguration('autouse'));
+		const workspace = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0] : undefined;
+		console.log(workspace);
+		scanner.scan(workspace);
+		console.log(DB.all());
 	});
 
 	context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

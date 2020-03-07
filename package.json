@@ -19,7 +19,18 @@
 				"command": "extension.helloWorld",
 				"title": "Hello World"
 			}
-		]
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Auto Use configuration",
+			"properties": {
+				"autouse.filesToScan": {
+					"type": "string",
+					"default": "**/lib/**/*.pm",
+					"description": "Glob for files to watch and scan, e.g **/lib/**/*.pm"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
