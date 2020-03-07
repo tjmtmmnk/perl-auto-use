@@ -24,7 +24,11 @@ export class Core {
 
         const selectUseCommand = vscode.commands.registerCommand('extension.selectUse', () => {
             const selector = new Selector();
-            selector.insertUseSelection('waaa');
+            const selectText = selector.getSelectText();
+            const importObjects = DB.findByName(selectText);
+            const importObject = importObjects ? importObjects[0] : undefined;
+            const useBuilder = 'use ' + importObject?.packageName + ' qw(' + selectText + ');\n';
+            selector.insertUseSelection(useBuilder);
         });
 
         this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand);
