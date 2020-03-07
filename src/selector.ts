@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 
 export class Selector {
-    public getSelectText(): string | undefined {
+    public getSelectText(): string {
         const editor = vscode.window.activeTextEditor;
-        return editor?.document?.getText(editor?.selection);
+        const document = editor?.document;
+        if (editor === undefined || document === undefined) { return ''; }
+        return editor.document.getText(editor.selection);
     }
 
     // package の次の行にuseを挿入する

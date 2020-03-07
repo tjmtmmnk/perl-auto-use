@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 export interface ImportObject {
     name: string,
+    packageName: string,
     file: vscode.Uri,
     workspace: vscode.WorkspaceFolder | undefined
 }
@@ -13,21 +14,20 @@ export class DB {
         return this.imports;
     }
 
-    public static add(name: string, file: any, workspace: vscode.WorkspaceFolder | undefined): void {
+    public static add(name: string, packageName: string, file: any, workspace: vscode.WorkspaceFolder | undefined): void {
 
         name = name.trim();
 
-        if (name === '' || name.length === 1) {
-            return;
-        }
+        if (name === '' || name.length === 1) { return; }
 
         const obj: ImportObject = {
             name,
+            packageName,
             file,
             workspace
         };
 
-        const exists = this.imports.findIndex(m => m.name === obj.name && m.file.fsPath === file.fsPath);
+        const exists = this.imports.findIndex(m => m.name === name && m.packageName === packageName && m.file.fsPath === file.fsPath);
 
         if (exists === -1) {
             this.imports.push(obj);

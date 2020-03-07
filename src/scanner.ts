@@ -30,14 +30,17 @@ export class Scanner {
             const exportMatches = data.match(/@EXPORT(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
             const exportOKMatches = data.match(/@EXPORT_OK(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
 
+            const packageNames = data.match(/package [A-Za-z0-9:]+;/g);
+            const packageName = packageNames ? packageNames[0].replace('package ', '').replace(';', '') : '';
+
             if (exportMatches) {
                 const subs: string[] = exportMatches[0].replace(/@EXPORT(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
-                subs.forEach(sub => DB.add(sub, file, workspace));
+                subs.forEach(sub => DB.add(sub, packageName, file, workspace));
             }
 
             if (exportOKMatches) {
                 const subs: string[] = exportOKMatches[0].replace(/@EXPORT_OK(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
-                subs.forEach(sub => DB.add(sub, file, workspace));
+                subs.forEach(sub => DB.add(sub, packageName, file, workspace));
             }
         });
     }
