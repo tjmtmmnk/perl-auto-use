@@ -1,13 +1,13 @@
-import * as FS from 'fs';
+import { readFile } from 'fs';
 import * as vscode from 'vscode';
 
-import { DB, ImportObject } from './db';
+import { DB } from './db';
 
 export class Scanner {
     private filesToScan: string;
 
     constructor(private config: vscode.WorkspaceConfiguration) {
-        this.filesToScan = this.config.get<string>('filesToScan', '**/lib/**');
+        this.filesToScan = this.config.get<string>('filesToScan', '**/lib/**/*.pm');
     }
 
     public scan(workspace: vscode.WorkspaceFolder | undefined): void {
@@ -22,7 +22,7 @@ export class Scanner {
     }
 
     private processFile(workspace: vscode.WorkspaceFolder | undefined, file: vscode.Uri): void {
-        FS.readFile(file.fsPath, 'utf-8', (err, data) => {
+        readFile(file.fsPath, 'utf-8', (err, data) => {
             if (err) {
                 return console.log(err);
             }

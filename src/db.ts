@@ -33,4 +33,8 @@ export class DB {
             this.imports.push(obj);
         }
     }
+
+    public static findByName(name: string): Array<ImportObject> {
+        return this.imports.filter(obj => obj.name === name);
+    }
 }
