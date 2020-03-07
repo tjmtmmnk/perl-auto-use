@@ -22,12 +22,14 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World!');
 		const scanner = new Scanner(vscode.workspace.getConfiguration('autouse'));
 		const workspace = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0] : undefined;
-		console.log(workspace);
 		scanner.scan(workspace);
+	});
+
+	const disposable2 = vscode.commands.registerCommand('extension.showDB', () => {
 		console.log(DB.all());
 	});
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(disposable, disposable2);
 }
 
 // this method is called when your extension is deactivated

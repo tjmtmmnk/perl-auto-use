@@ -1,7 +1,7 @@
 import * as FS from 'fs';
 import * as vscode from 'vscode';
 
-import { DB } from './db';
+import { DB, ImportObject } from './db';
 
 export class Scanner {
     private filesToScan: string;
@@ -10,16 +10,13 @@ export class Scanner {
         this.filesToScan = this.config.get<string>('filesToScan', '**/lib/**');
     }
 
-    public scan(workspace: vscode.WorkspaceFolder | undefined) {
+    public scan(workspace: vscode.WorkspaceFolder | undefined): void {
         const scanLocation: vscode.GlobPattern = workspace === undefined ? this.filesToScan : new vscode.RelativePattern(workspace, this.filesToScan);
-        console.log(scanLocation);
 
-        vscode.workspace
-            .findFiles(scanLocation, null, 99999)
-            .then(uriList => {
-                console.log(uriList);
-                uriList.forEach(uri => {
-                    this.processFile(workspace, uri);
+        vscode.workspace.findFiles(scanLocation, null, 99999)
+            .then(files => {
+                files.forEach(file => {
+                    this.processFile(workspace, file);
                 });
             });
     }
@@ -34,12 +31,12 @@ export class Scanner {
             const exportOKMatches = data.match(/our @EXPORT_OK(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
 
             if (exportMatches) {
-                const subs: string[] = exportMatches[0].replace(/our @EXPORT(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(/\s*/g);
+                const subs: string[] = exportMatches[0].replace(/our @EXPORT(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
                 subs.forEach(sub => DB.add(sub, file, workspace));
             }
 
             if (exportOKMatches) {
-                const subs: string[] = exportOKMatches[0].replace(/our @EXPORT_OK(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(/\s*/g);
+                const subs: string[] = exportOKMatches[0].replace(/our @EXPORT_OK(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
                 subs.forEach(sub => DB.add(sub, file, workspace));
             }
         });
