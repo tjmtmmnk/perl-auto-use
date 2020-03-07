@@ -26,9 +26,11 @@ export class Core {
             const selector = new Selector();
             const selectText = selector.getSelectText();
             const importObjects = DB.findByName(selectText);
-            const importObject = importObjects ? importObjects[0] : undefined;
-            const useBuilder = 'use ' + importObject?.packageName + ' qw(' + selectText + ');\n';
-            selector.insertUseSelection(useBuilder);
+            if (importObjects) {
+                const packageName = importObjects[0].packageName;
+                const useBuilder = 'use ' + packageName + ' qw(' + selectText + ');';
+                selector.insertUseSelection(useBuilder);
+            }
         });
 
         this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand);
