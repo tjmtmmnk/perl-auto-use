@@ -10,19 +10,24 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld",
-		"onCommand:extension.showDB"
+		"onCommand:extension.scanFiles",
+		"onCommand:extension.showDB",
+		"onCommand:extension.selectUse"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
+				"command": "extension.scanFiles",
+				"title": "Scan perl module files"
 			},
 			{
 				"command": "extension.showDB",
 				"title": "Show DB"
+			},
+			{
+				"command": "extension.selectUse",
+				"title": "Select and exec auto use"
 			}
 		],
 		"configuration": {
