@@ -6,36 +6,6 @@ interface UseSubObject {
 }
 
 export class Selector {
-    private getFirstLineByRegex(regex: RegExp): number | undefined {
-        const editor = vscode.window.activeTextEditor;
-        const document = editor?.document;
-        if (editor === undefined || document === undefined) { return undefined; }
-
-        for (let i = 0; i < document.lineCount; i++) {
-            const line = document?.lineAt(i).text;
-            const packageMatches = line.match(regex);
-            if (packageMatches) { return i + 1; }
-        }
-    }
-
-    private getStartPositionsByRegex(regex: RegExp): vscode.Position[] | undefined {
-        const editor = vscode.window.activeTextEditor;
-        const document = editor?.document;
-        const fullText = document?.getText();
-
-        if (editor === undefined || fullText === undefined) { return undefined; }
-
-        const matches = fullText.matchAll(regex);
-        let startPositions = new Array<vscode.Position>();
-        for (const match of matches) {
-            const endIndex = match.index !== undefined ? match.index + match[0].length : 0;
-            const startPosition = editor.document.positionAt(endIndex);
-            startPositions.push(startPosition);
-        }
-
-        return startPositions;
-    }
-
     private getRangesByRegex(regex: RegExp): vscode.Range[] | undefined {
         const editor = vscode.window.activeTextEditor;
         const document = editor?.document;
@@ -65,13 +35,13 @@ export class Selector {
 
     public insertUseSelection(useStatement: string): void {
         const editor = vscode.window.activeTextEditor;
-        const positions = this.getStartPositionsByRegex(new RegExp(/package [A-Za-z0-9:]+;/, 'g'));
+        const ranges = this.getRangesByRegex(new RegExp(/package [A-Za-z0-9:]+;/, 'g'));
 
-        if (positions === undefined) { return; }
+        if (ranges === undefined) { return; }
 
         // package の次の行にuseを挿入する
-        const position = new vscode.Position(positions[0].line + 1, 0);
-        editor?.edit(e => e.insert(position, useStatement + "\n"));
+        const endPosition = new vscode.Position(ranges[0].end.line + 1, 0);
+        editor?.edit(e => e.insert(endPosition, useStatement + "\n"));
     }
 
     public getFullyQualifiedModules(): string[] | undefined {
