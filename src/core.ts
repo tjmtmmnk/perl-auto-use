@@ -11,6 +11,15 @@ export class Core {
         this.workspace = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0] : undefined;
     }
 
+    private useBuilder(packageName: string, subList: string[] | undefined): string {
+        if (subList === undefined) { return 'use ' + packageName + ';'; }
+        let subListStr = "";
+        for (let i = 0; i < subList.length; i++) {
+            subListStr += (i !== subList.length - 1 ? subList[i] + ' ' : subList[i]);
+        }
+        return 'use ' + packageName + ' qw(' + subListStr + ');';
+    }
+
     public attatchCommands(): void {
         const scanCommand = vscode.commands.registerCommand('extension.scanFiles', () => {
             vscode.window.showInformationMessage('Hello World!');
@@ -28,7 +37,10 @@ export class Core {
             const importObjects = DB.findByName(selectText);
             if (importObjects) {
                 const packageName = importObjects[0].packageName;
-                const useBuilder = 'use ' + packageName + ' qw(' + selectText + ');';
+                const declaredUseSub = selector.getDeclaredUseSub();
+                const alreadyDeclaredUseSub = declaredUseSub?.filter(dus => dus.packageName === packageName);
+                const subList = alreadyDeclaredUseSub ? alreadyDeclaredUseSub[0].subList.concat([selectText]) : [selectText];
+                const useBuilder = this.useBuilder(packageName, subList);
                 selector.insertUseSelection(useBuilder);
             }
         });

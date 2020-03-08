@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 interface UseSubObject {
-    moduleName: string,
+    packageName: string,
     subList: string[],
 }
 
@@ -58,7 +58,7 @@ export class Selector {
         const useSubMatches = fullText?.match(/use [A-Za-z0-9:]+ qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
     
         return useSubMatches?.map(u => {
-            const moduleName = u
+            const packageName = u
                 .replace('use ', '')
                 .replace(/ qw(\/|\()(\s*\w+\s*)*(\/|\));/, '');
 
@@ -70,7 +70,7 @@ export class Selector {
                 .filter(s => s !== '');
 
             const obj: UseSubObject = {
-                moduleName,
+                packageName,
                 subList
             };
 
