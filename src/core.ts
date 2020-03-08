@@ -20,8 +20,6 @@ export class Core {
 
         const showDBCommand = vscode.commands.registerCommand('extension.showDB', () => {
             console.log(DB.all());
-            const selector = new Selector();
-            console.log(selector.getFullyQualifiedFunctions());
         });
 
         const selectUseCommand = vscode.commands.registerCommand('extension.selectUse', () => {
@@ -37,9 +35,10 @@ export class Core {
 
         const searchUseCommand = vscode.commands.registerCommand('extension.searchUse', () => {
             const selector = new Selector();
-            console.log(selector.getFullyQualifiedFunctions());
+            const use = selector.getDeclaredUse();
+            const useSub = selector.getDeclaredUseSub();
         });
 
-        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand);
+        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand, searchUseCommand);
     }
 }
