@@ -34,12 +34,22 @@ export class Scanner {
             const packageName = packageNames ? packageNames[0].replace('package ', '').replace(';', '') : '';
 
             if (exportMatches) {
-                const subs: string[] = exportMatches[0].replace(/@EXPORT(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
+                const subs: string[] = exportMatches[0]
+                    .replace(/@EXPORT(\s*=\s*)qw(\/|\()/, '')
+                    .replace(/(\/|\));/, '')
+                    .split(/\s/)
+                    .filter(s => s !== '');
+
                 subs.forEach(sub => DB.add(sub, packageName, file, workspace));
             }
 
             if (exportOKMatches) {
-                const subs: string[] = exportOKMatches[0].replace(/@EXPORT_OK(\s*=\s*)qw(\/|\()/, '').replace(/(\/|\));/, '').split(' ');
+                const subs: string[] = exportOKMatches[0]
+                    .replace(/@EXPORT_OK(\s*=\s*)qw(\/|\()/, '')
+                    .replace(/(\/|\));/, '')
+                    .split(/\s/)
+                    .filter(s => s !== '');
+                
                 subs.forEach(sub => DB.add(sub, packageName, file, workspace));
             }
         });
