@@ -16,12 +16,12 @@ export class Scanner {
         vscode.workspace.findFiles(scanLocation, null, 99999)
             .then(files => {
                 files.forEach(file => {
-                    this.processFile(workspace, file);
+                    this.extractExportFunctions(workspace, file);
                 });
             });
     }
 
-    private processFile(workspace: vscode.WorkspaceFolder | undefined, file: vscode.Uri): void {
+    private extractExportFunctions(workspace: vscode.WorkspaceFolder | undefined, file: vscode.Uri): void {
         readFile(file.fsPath, 'utf-8', (err, data) => {
             if (err) {
                 return console.log(err);

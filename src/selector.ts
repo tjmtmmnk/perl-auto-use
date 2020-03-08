@@ -5,7 +5,7 @@ export class Selector {
         const editor = vscode.window.activeTextEditor;
         const document = editor?.document;
         if (editor === undefined || document === undefined) { return ''; }
-        return editor.document.getText(editor.selection);
+        return document.getText(editor.selection);
     }
 
     // package の次の行にuseを挿入する
@@ -27,5 +27,15 @@ export class Selector {
 
         const position = new vscode.Position(startLine, 0);
         editor?.edit(e => e.insert(position, useStatement + "\n"));
+    }
+
+    public getFullyQualifiedFunctions(): string[] | undefined {
+        const editor = vscode.window.activeTextEditor;
+        const document = editor?.document;
+        const fullText = document?.getText();
+        const fullyQualifiedMatches = fullText?.match(/[A-Za-z0-9:]+(->|::)\w+\([\s\S]*\);/g);
+        const uniqueFullyQualifieeMatches = fullyQualifiedMatches?.filter((f, index, self) => self.indexOf(f) === index);
+        const fullyQualifiedFunctions = uniqueFullyQualifieeMatches?.map(f => f.replace(/(->)?\w+\([\s\S]*\);/, ''));
+        return fullyQualifiedFunctions;
     }
 }
