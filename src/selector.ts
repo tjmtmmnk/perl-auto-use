@@ -28,8 +28,8 @@ export class Selector {
         const matches = fullText.matchAll(regex);
         let startPositions = new Array<vscode.Position>();
         for (const match of matches) {
-            const startIndex = match.index ? match.index : 0;
-            const startPosition = editor.document.positionAt(startIndex);
+            const endIndex = match.index !== undefined ? match.index + match[0].length : 0;
+            const startPosition = editor.document.positionAt(endIndex);
             startPositions.push(startPosition);
         }
 
@@ -46,8 +46,8 @@ export class Selector {
         const matches = fullText.matchAll(regex);
         let ranges = new Array<vscode.Range>();
         for (const match of matches) {
-            const startIndex = match.index ? match.index : 0;
-            const endIndex = match.index ? match.index + match[0].length : 0;
+            const startIndex = match.index !== undefined ? match.index : 0;
+            const endIndex = match.index !== undefined ? match.index + match[0].length : 0;
             const startPosition = editor.document.positionAt(startIndex);
             const endPosition = editor.document.positionAt(endIndex);
             ranges.push(new vscode.Range(startPosition, endPosition));
@@ -63,14 +63,14 @@ export class Selector {
         return document.getText(editor.selection);
     }
 
-    // package の次の行にuseを挿入する
     public insertUseSelection(useStatement: string): void {
         const editor = vscode.window.activeTextEditor;
-        const startLine = this.getFirstLineByRegex(new RegExp(/package [A-Za-z0-9:]+;/, 'g'));
+        const positions = this.getStartPositionsByRegex(new RegExp(/package [A-Za-z0-9:]+;/, 'g'));
 
-        if (startLine === undefined) { return; }
+        if (positions === undefined) { return; }
 
-        const position = new vscode.Position(startLine, 0);
+        // package の次の行にuseを挿入する
+        const position = new vscode.Position(positions[0].line + 1, 0);
         editor?.edit(e => e.insert(position, useStatement + "\n"));
     }
 
