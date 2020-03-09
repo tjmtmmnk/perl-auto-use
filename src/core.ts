@@ -32,7 +32,11 @@ export class Core {
         });
 
         const selectUseCommand = vscode.commands.registerCommand('extension.selectUse', () => {
-            const selector = new Selector();
+            const editor = vscode.window.activeTextEditor;
+
+            if (editor === undefined) { return; }
+
+            const selector = new Selector(editor);
             const selectText = selector.getSelectText();
             const importObjects = DB.findByName(selectText);
             if (importObjects) {
@@ -41,16 +45,15 @@ export class Core {
                 const alreadyDeclaredUseSub = declaredUseSub?.filter(dus => dus.packageName === packageName);
                 const subList = alreadyDeclaredUseSub ? alreadyDeclaredUseSub[0].subList.concat([selectText]) : [selectText];
                 const useBuilder = this.useBuilder(packageName, subList);
+                if (alreadyDeclaredUseSub) {
+                    const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));`;
+                    selector.deleteByRegex(RegExp(regex, 'g'))
+                        .then(() => selector.insertUseSelection(useBuilder));
+                }
                 selector.insertUseSelection(useBuilder);
             }
         });
 
-        const searchUseCommand = vscode.commands.registerCommand('extension.searchUse', () => {
-            const selector = new Selector();
-            const use = selector.getDeclaredUse();
-            const useSub = selector.getDeclaredUseSub();
-        });
-
-        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand, searchUseCommand);
+        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand);
     }
 }

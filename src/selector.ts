@@ -6,20 +6,26 @@ interface UseSubObject {
 }
 
 export class Selector {
-    private getRangesByRegex(regex: RegExp): vscode.Range[] | undefined {
-        const editor = vscode.window.activeTextEditor;
-        const document = editor?.document;
+    private editor: vscode.TextEditor;
+
+    constructor(private _editor: vscode.TextEditor) {
+        this.editor = _editor;
+    }
+
+    private getRangesByRegex(regex: RegExp): vscode.Range[] {
+        const document = this.editor.document;
         const fullText = document?.getText();
 
-        if (editor === undefined || fullText === undefined) { return undefined; }
+        if (fullText === undefined) { return []; }
 
         const matches = fullText.matchAll(regex);
+
         let ranges = new Array<vscode.Range>();
         for (const match of matches) {
             const startIndex = match.index !== undefined ? match.index : 0;
             const endIndex = match.index !== undefined ? match.index + match[0].length : 0;
-            const startPosition = editor.document.positionAt(startIndex);
-            const endPosition = editor.document.positionAt(endIndex);
+            const startPosition = this.editor.document.positionAt(startIndex);
+            const endPosition = this.editor.document.positionAt(endIndex);
             ranges.push(new vscode.Range(startPosition, endPosition));
         }
 
@@ -27,26 +33,23 @@ export class Selector {
     }
 
     public getSelectText(): string {
-        const editor = vscode.window.activeTextEditor;
-        const document = editor?.document;
-        if (editor === undefined || document === undefined) { return ''; }
-        return document.getText(editor.selection);
+        const document = this.editor.document;
+        if (document === undefined) { return ''; }
+        return document.getText(this.editor.selection);
     }
 
-    public insertUseSelection(useStatement: string): void {
-        const editor = vscode.window.activeTextEditor;
-        const ranges = this.getRangesByRegex(new RegExp(/package [A-Za-z0-9:]+;/, 'g'));
+    // package の次の行にuseを挿入する
+    public insertUseSelection(useStatement: string): Thenable<boolean> {
+        const ranges = this.getRangesByRegex(RegExp(/package [A-Za-z0-9:]+;/));
 
-        if (ranges === undefined) { return; }
+        if (ranges === []) { return Promise.reject(new Error('no package found')); }
 
-        // package の次の行にuseを挿入する
         const endPosition = new vscode.Position(ranges[0].end.line + 1, 0);
-        editor?.edit(e => e.insert(endPosition, useStatement + "\n"));
+        return this.editor.edit(e => e.insert(endPosition, useStatement + "\n"));
     }
 
     public getFullyQualifiedModules(): string[] | undefined {
-        const editor = vscode.window.activeTextEditor;
-        const document = editor?.document;
+        const document = this.editor.document;
         const fullText = document?.getText();
         const fullyQualifiedMatches = fullText?.match(/[A-Za-z0-9:]+(->|::)\w+\([\s\S]*\);/g);
         const uniqueFullyQualifieeMatches = fullyQualifiedMatches?.filter((f, index, self) => self.indexOf(f) === index);
@@ -54,16 +57,14 @@ export class Selector {
     }
 
     public getDeclaredUse(): string[] | undefined {
-        const editor = vscode.window.activeTextEditor;
-        const document = editor?.document;
+        const document = this.editor.document;
         const fullText = document?.getText();
         const useMatches = fullText?.match(/use [A-Za-z0-9:]+;/g);
         return useMatches?.map(u => u.replace('use ', '').replace(';', ''));
     }
 
     public getDeclaredUseSub(): UseSubObject[] | undefined {
-        const editor = vscode.window.activeTextEditor;
-        const document = editor?.document;
+        const document = this.editor.document;
         const fullText = document?.getText();
         const useSubMatches = fullText?.match(/use [A-Za-z0-9:]+ qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
 
@@ -86,5 +87,13 @@ export class Selector {
 
             return obj;
         });
+    }
+
+    public deleteByRegex(regex: RegExp): Thenable<boolean> {
+        const ranges = this.getRangesByRegex(regex);
+
+        if (ranges === []) { return Promise.reject('not match'); }
+
+        return this.editor.edit(e => ranges.forEach(range => e.delete(range)));
     }
 }
