@@ -8,9 +8,9 @@ export interface ImportObject {
 }
 
 export class DB {
-    private static imports: Array<ImportObject> = new Array<ImportObject>();
+    private static imports: ImportObject[] = new Array<ImportObject>();
 
-    public static all(): Array<ImportObject> {
+    public static all(): ImportObject[] {
         return this.imports;
     }
 
@@ -34,7 +34,7 @@ export class DB {
         }
     }
 
-    public static findByName(name: string): Array<ImportObject> {
+    public static findByName(name: string): ImportObject[] {
         return this.imports.filter(obj => obj.name === name);
     }
 }

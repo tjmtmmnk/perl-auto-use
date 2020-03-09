@@ -10,5 +10,5 @@ sub foo_func {
     args my $class => 'ClassName',
     ;
 
-    Hoge::Bar->bar_func;
+    Hoge::Bar->bar_func();
 }

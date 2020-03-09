@@ -11,6 +11,15 @@ export class Core {
         this.workspace = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0] : undefined;
     }
 
+    private useBuilder(packageName: string, subList: string[] | undefined): string {
+        if (subList === undefined) { return 'use ' + packageName + ';'; }
+        let subListStr = "";
+        for (let i = 0; i < subList.length; i++) {
+            subListStr += (i !== subList.length - 1 ? subList[i] + ' ' : subList[i]);
+        }
+        return 'use ' + packageName + ' qw(' + subListStr + ');';
+    }
+
     public attatchCommands(): void {
         const scanCommand = vscode.commands.registerCommand('extension.scanFiles', () => {
             vscode.window.showInformationMessage('Hello World!');
@@ -22,17 +31,47 @@ export class Core {
             console.log(DB.all());
         });
 
+        // select word for use, search for perl library database and insert use statement
         const selectUseCommand = vscode.commands.registerCommand('extension.selectUse', () => {
-            const selector = new Selector();
+            const editor = vscode.window.activeTextEditor;
+
+            if (editor === undefined) { return; }
+
+            const selector = new Selector(editor);
             const selectText = selector.getSelectText();
             const importObjects = DB.findByName(selectText);
             if (importObjects) {
                 const packageName = importObjects[0].packageName;
-                const useBuilder = 'use ' + packageName + ' qw(' + selectText + ');';
-                selector.insertUseSelection(useBuilder);
+                const declaredModuleSub = selector.getDeclaredModuleSub();
+                const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
+                const subList = alreadyDeclaredModuleSub ? alreadyDeclaredModuleSub[0].subList.concat([selectText]) : [selectText];
+                const useBuilder = this.useBuilder(packageName, subList);
+                if (alreadyDeclaredModuleSub) {
+                    const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));`;
+                    selector.deleteByRegex(RegExp(regex, 'g'))
+                        .then(() => selector.insertUseStatement([useBuilder]));
+                }
+                selector.insertUseStatement([useBuilder]);
             }
         });
 
-        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand);
+        // search fully qualified subroutines, and insert use statement
+        const searchUseCommand = vscode.commands.registerCommand('extension.searchUse', () => {
+            const editor = vscode.window.activeTextEditor;
+
+            if (editor === undefined) { return; }
+
+            const selector = new Selector(editor);
+            const declaredUse = selector.getDeclaredModule();
+            const fullyQualifiedModules = selector.getFullyQualifiedModules();
+            const notDeclaredModule = fullyQualifiedModules?.filter(fqm => !declaredUse?.includes(fqm));
+            const useStatements = notDeclaredModule?.map(us => this.useBuilder(us, undefined));
+
+            if (useStatements === undefined) { return; }
+
+            selector.insertUseStatement(useStatements);
+        });
+
+        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand, searchUseCommand);
     }
 }
