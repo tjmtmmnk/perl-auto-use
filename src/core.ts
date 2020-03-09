@@ -31,6 +31,7 @@ export class Core {
             console.log(DB.all());
         });
 
+        // select word for use, search for perl library database and insert use statement
         const selectUseCommand = vscode.commands.registerCommand('extension.selectUse', () => {
             const editor = vscode.window.activeTextEditor;
 
@@ -41,11 +42,11 @@ export class Core {
             const importObjects = DB.findByName(selectText);
             if (importObjects) {
                 const packageName = importObjects[0].packageName;
-                const declaredUseSub = selector.getDeclaredUseSub();
-                const alreadyDeclaredUseSub = declaredUseSub?.filter(dus => dus.packageName === packageName);
-                const subList = alreadyDeclaredUseSub ? alreadyDeclaredUseSub[0].subList.concat([selectText]) : [selectText];
+                const declaredModuleSub = selector.getDeclaredModuleSub();
+                const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
+                const subList = alreadyDeclaredModuleSub ? alreadyDeclaredModuleSub[0].subList.concat([selectText]) : [selectText];
                 const useBuilder = this.useBuilder(packageName, subList);
-                if (alreadyDeclaredUseSub) {
+                if (alreadyDeclaredModuleSub) {
                     const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));`;
                     selector.deleteByRegex(RegExp(regex, 'g'))
                         .then(() => selector.insertUseSelection(useBuilder));
@@ -54,6 +55,20 @@ export class Core {
             }
         });
 
-        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand);
+        // search fully qualified subroutines, and insert use statement
+        const searchUseCommand = vscode.commands.registerCommand('extension.searchUse', () => {
+            const editor = vscode.window.activeTextEditor;
+
+            if (editor === undefined) { return; }
+
+            const selector = new Selector(editor);
+            const declaredUse = selector.getDeclaredModule();
+            const fullyQualifiedModules = selector.getFullyQualifiedModules();
+            const notDeclaredModule = fullyQualifiedModules?.filter(fqm => !declaredUse?.includes(fqm));
+
+            notDeclaredModule?.forEach(ndm => selector.insertUseSelection(this.useBuilder(ndm, undefined)));
+        });
+
+        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand, searchUseCommand);
     }
 }

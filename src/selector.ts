@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-interface UseSubObject {
+interface ModuleSubObject {
     packageName: string,
     subList: string[],
 }
@@ -38,7 +38,7 @@ export class Selector {
         return document.getText(this.editor.selection);
     }
 
-    // package の次の行にuseを挿入する
+    // insert use statement next line of 'package'
     public insertUseSelection(useStatement: string): Thenable<boolean> {
         const ranges = this.getRangesByRegex(RegExp(/package [A-Za-z0-9:]+;/));
 
@@ -51,19 +51,19 @@ export class Selector {
     public getFullyQualifiedModules(): string[] | undefined {
         const document = this.editor.document;
         const fullText = document?.getText();
-        const fullyQualifiedMatches = fullText?.match(/[A-Za-z0-9:]+(->|::)\w+\([\s\S]*\);/g);
-        const uniqueFullyQualifieeMatches = fullyQualifiedMatches?.filter((f, index, self) => self.indexOf(f) === index);
-        return uniqueFullyQualifieeMatches?.map(f => f.replace(/(->)?\w+\([\s\S]*\);/, ''));
+        const fullyQualifiedMatches = fullText?.match(/[A-Za-z0-9:]+(->|::)\w+\((\n|\r\n|\r|\w|=|>|,| |\{|\})*\);/g);
+        const uniqueFullyQualifiedMatches = fullyQualifiedMatches?.filter((f, index, self) => self.indexOf(f) === index);
+        return uniqueFullyQualifiedMatches?.map(f => f.replace(/(->)?\w+\([\s\S]*\);/, ''));
     }
 
-    public getDeclaredUse(): string[] | undefined {
+    public getDeclaredModule(): string[] | undefined {
         const document = this.editor.document;
         const fullText = document?.getText();
         const useMatches = fullText?.match(/use [A-Za-z0-9:]+;/g);
         return useMatches?.map(u => u.replace('use ', '').replace(';', ''));
     }
 
-    public getDeclaredUseSub(): UseSubObject[] | undefined {
+    public getDeclaredModuleSub(): ModuleSubObject[] | undefined {
         const document = this.editor.document;
         const fullText = document?.getText();
         const useSubMatches = fullText?.match(/use [A-Za-z0-9:]+ qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
@@ -80,7 +80,7 @@ export class Selector {
                 .split(/\s/)
                 .filter(s => s !== '');
 
-            const obj: UseSubObject = {
+            const obj: ModuleSubObject = {
                 packageName,
                 subList
             };
