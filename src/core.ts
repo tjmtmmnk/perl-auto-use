@@ -49,9 +49,9 @@ export class Core {
                 if (alreadyDeclaredModuleSub) {
                     const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));`;
                     selector.deleteByRegex(RegExp(regex, 'g'))
-                        .then(() => selector.insertUseSelection(useBuilder));
+                        .then(() => selector.insertUseStatement([useBuilder]));
                 }
-                selector.insertUseSelection(useBuilder);
+                selector.insertUseStatement([useBuilder]);
             }
         });
 
@@ -65,8 +65,11 @@ export class Core {
             const declaredUse = selector.getDeclaredModule();
             const fullyQualifiedModules = selector.getFullyQualifiedModules();
             const notDeclaredModule = fullyQualifiedModules?.filter(fqm => !declaredUse?.includes(fqm));
+            const useStatements = notDeclaredModule?.map(us => this.useBuilder(us, undefined));
 
-            notDeclaredModule?.forEach(ndm => selector.insertUseSelection(this.useBuilder(ndm, undefined)));
+            if (useStatements === undefined) { return; }
+
+            selector.insertUseStatement(useStatements);
         });
 
         this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand, searchUseCommand);

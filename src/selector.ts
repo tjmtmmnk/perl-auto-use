@@ -39,13 +39,13 @@ export class Selector {
     }
 
     // insert use statement next line of 'package'
-    public insertUseSelection(useStatement: string): Thenable<boolean> {
+    public insertUseStatement(useStatements: string[]): Thenable<boolean> {
         const ranges = this.getRangesByRegex(RegExp(/package [A-Za-z0-9:]+;/));
 
         if (ranges === []) { return Promise.reject(new Error('no package found')); }
 
         const endPosition = new vscode.Position(ranges[0].end.line + 1, 0);
-        return this.editor.edit(e => e.insert(endPosition, useStatement + "\n"));
+        return this.editor.edit(e => useStatements.forEach(useStatement => e.insert(endPosition, useStatement + "\n")));
     }
 
     public getFullyQualifiedModules(): string[] | undefined {
