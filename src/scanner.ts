@@ -30,7 +30,7 @@ export class Scanner {
             const exportMatches = data.match(/@EXPORT(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
             const exportOKMatches = data.match(/@EXPORT_OK(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
 
-            const packageNames = data.match(/package [A-Za-z0-9:]+;/g);
+            const packageNames = data.match(/package [A-Za-z0-9:]+;/);
             const packageName = packageNames ? packageNames[0].replace('package ', '').replace(';', '') : '';
 
             if (exportMatches) {

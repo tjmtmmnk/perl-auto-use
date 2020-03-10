@@ -39,7 +39,7 @@ export class Selector {
     }
 
     // insert use statement next line of 'package'
-    public insertUseStatement(useStatements: string[]): Thenable<boolean> {
+    public insertUseStatements(useStatements: string[]): Thenable<boolean> {
         const ranges = this.getRangesByRegex(RegExp(/package [A-Za-z0-9:]+;/));
 
         if (ranges === []) { return Promise.reject(new Error('no package found')); }
@@ -50,10 +50,24 @@ export class Selector {
 
     public getFullyQualifiedModules(): string[] | undefined {
         const document = this.editor.document;
-        const fullText = document?.getText();
-        const fullyQualifiedMatches = fullText?.match(/[A-Za-z0-9:]+(->|::)\w+\((\n|\r\n|\r|\w|=|>|,| |\{|\})*\);/g);
-        const uniqueFullyQualifiedMatches = fullyQualifiedMatches?.filter((f, index, self) => self.indexOf(f) === index);
-        return uniqueFullyQualifiedMatches?.map(f => f.replace(/(->)?\w+\([\s\S]*\);/, ''));
+        const fullText = document?.getText().split(/\n|\r\n|\r/);
+        const fullyQualifiedModules = fullText?.reduce((results: any[], lineText) => {
+            const isLook = lineText.search(/package [A-Za-z0-9:]+;/) === -1 &&
+                lineText.search(/use [A-Za-z0-9:]+;/) === -1;
+            if (isLook) {
+                const moduleMatches = lineText.matchAll(/([A-Z][a-z0-9]*(::)?)+->/);
+                const moduleMatch = [...moduleMatches][0];
+                if (moduleMatch !== undefined) {
+                    console.log(moduleMatch[0]);
+                    const moduleName = moduleMatch[0].replace('->', '');
+                    results.push(moduleName);
+                }
+            }
+            return results;
+        }, []);
+
+        const uniqueFullyQualifiedModules: Set<string> = new Set(fullyQualifiedModules);
+        return [...uniqueFullyQualifiedModules];
     }
 
     public getDeclaredModule(): string[] | undefined {
