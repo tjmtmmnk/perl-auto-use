@@ -55,11 +55,19 @@ export class Selector {
             const isLook = lineText.search(/package [A-Za-z0-9:]+;/) === -1 &&
                 lineText.search(/use [A-Za-z0-9:]+;/) === -1;
             if (isLook) {
-                const moduleMatches = lineText.matchAll(/([A-Z][a-z0-9]*(::)?)+->/);
-                const moduleMatch = [...moduleMatches][0];
-                if (moduleMatch !== undefined) {
-                    console.log(moduleMatch[0]);
-                    const moduleName = moduleMatch[0].replace('->', '');
+                // e.g) Hoge::Foo->bar
+                const methodModuleMatches = lineText.matchAll(/([A-Z][a-z0-9]*(::)?)+->/);
+                const methodModuleMatch = [...methodModuleMatches][0];
+                // e.g) Hoge::Foo::bar
+                const subModuleMatches = lineText.matchAll(/(([A-Z][a-z0-9]*(::)?)+)([a-z0-9_]+)(\(|;)/);
+                const subModuleMatch = [...subModuleMatches][0];
+
+                if (methodModuleMatch) {
+                    const moduleName = methodModuleMatch[0].replace('->', '');
+                    results.push(moduleName);
+                }
+                if (subModuleMatch) {
+                    const moduleName = subModuleMatch[1].replace(/::$/, '');
                     results.push(moduleName);
                 }
             }
@@ -67,7 +75,7 @@ export class Selector {
         }, []);
 
         const uniqueFullyQualifiedModules: Set<string> = new Set(fullyQualifiedModules);
-        return [...uniqueFullyQualifiedModules];
+        return [...uniqueFullyQualifiedModules].sort();
     }
 
     public getDeclaredModule(): string[] | undefined {
