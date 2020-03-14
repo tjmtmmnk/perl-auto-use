@@ -2,6 +2,7 @@ import { readFile } from 'fs';
 import * as vscode from 'vscode';
 
 import { DB } from './db';
+import { AutoUseRegex } from './regex';
 
 export class Scanner {
     private filesToScan: string;
@@ -27,10 +28,10 @@ export class Scanner {
                 return console.log(err);
             }
 
-            const exportMatches = data.match(/@EXPORT(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
-            const exportOKMatches = data.match(/@EXPORT_OK(\s*=\s*)qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
+            const exportMatches = data.match(AutoUseRegex.EXPORT);
+            const exportOKMatches = data.match(AutoUseRegex.EXPORT_OK);
 
-            const packageNames = data.match(/package [A-Za-z0-9:]+;/g);
+            const packageNames = data.match(AutoUseRegex.PACKAGE);
             const packageName = packageNames ? packageNames[0].replace('package ', '').replace(';', '') : '';
 
             if (exportMatches) {
@@ -49,7 +50,7 @@ export class Scanner {
                     .replace(/(\/|\));/, '')
                     .split(/\s/)
                     .filter(s => s !== '');
-                
+
                 subs.forEach(sub => DB.add(sub, packageName, file, workspace));
             }
         });

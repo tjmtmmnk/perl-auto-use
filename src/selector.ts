@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 
+import { AutoUseRegex } from './regex';
+
 interface ModuleSubObject {
     packageName: string,
     subList: string[],
@@ -39,8 +41,8 @@ export class Selector {
     }
 
     // insert use statement next line of 'package'
-    public insertUseStatement(useStatements: string[]): Thenable<boolean> {
-        const ranges = this.getRangesByRegex(RegExp(/package [A-Za-z0-9:]+;/));
+    public insertUseStatements(useStatements: string[]): Thenable<boolean> {
+        const ranges = this.getRangesByRegex(AutoUseRegex.PACKAGE);
 
         if (ranges === []) { return Promise.reject(new Error('no package found')); }
 
@@ -50,23 +52,45 @@ export class Selector {
 
     public getFullyQualifiedModules(): string[] | undefined {
         const document = this.editor.document;
-        const fullText = document?.getText();
-        const fullyQualifiedMatches = fullText?.match(/[A-Za-z0-9:]+(->|::)\w+\((\n|\r\n|\r|\w|=|>|,| |\{|\})*\);/g);
-        const uniqueFullyQualifiedMatches = fullyQualifiedMatches?.filter((f, index, self) => self.indexOf(f) === index);
-        return uniqueFullyQualifiedMatches?.map(f => f.replace(/(->)?\w+\([\s\S]*\);/, ''));
+        const fullText = document?.getText().split(/\n|\r\n|\r/);
+        const fullyQualifiedModules = fullText?.reduce((results: any[], lineText) => {
+            const isLook = lineText.search(AutoUseRegex.PACKAGE) === -1 &&
+                lineText.search(AutoUseRegex.USE) === -1;
+            if (isLook) {
+                // e.g) Hoge::Foo->bar
+                const methodModuleMatches = lineText.matchAll(AutoUseRegex.METHOD_MODULE);
+                const methodModuleMatch = [...methodModuleMatches][0];
+                // e.g) Hoge::Foo::bar
+                const subModuleMatches = lineText.matchAll(AutoUseRegex.SUB_MODULE);
+                const subModuleMatch = [...subModuleMatches][0];
+
+                if (methodModuleMatch) {
+                    const moduleName = methodModuleMatch[0].replace('->', '');
+                    results.push(moduleName);
+                }
+                if (subModuleMatch) {
+                    const moduleName = subModuleMatch[1].replace(/::$/, '');
+                    results.push(moduleName);
+                }
+            }
+            return results;
+        }, []);
+
+        const uniqueFullyQualifiedModules: Set<string> = new Set(fullyQualifiedModules);
+        return [...uniqueFullyQualifiedModules].sort();
     }
 
     public getDeclaredModule(): string[] | undefined {
         const document = this.editor.document;
         const fullText = document?.getText();
-        const useMatches = fullText?.match(/use [A-Za-z0-9:]+;/g);
+        const useMatches = fullText?.match(AutoUseRegex.USE);
         return useMatches?.map(u => u.replace('use ', '').replace(';', ''));
     }
 
     public getDeclaredModuleSub(): ModuleSubObject[] | undefined {
         const document = this.editor.document;
         const fullText = document?.getText();
-        const useSubMatches = fullText?.match(/use [A-Za-z0-9:]+ qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
+        const useSubMatches = fullText?.match(AutoUseRegex.USE_SUB);
 
         return useSubMatches?.map(u => {
             const packageName = u
