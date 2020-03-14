@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 
+import { AutoUseRegex } from './regex';
+
 interface ModuleSubObject {
     packageName: string,
     subList: string[],
@@ -40,7 +42,7 @@ export class Selector {
 
     // insert use statement next line of 'package'
     public insertUseStatements(useStatements: string[]): Thenable<boolean> {
-        const ranges = this.getRangesByRegex(RegExp(/package [A-Za-z0-9:]+;/));
+        const ranges = this.getRangesByRegex(AutoUseRegex.PACKAGE);
 
         if (ranges === []) { return Promise.reject(new Error('no package found')); }
 
@@ -52,14 +54,14 @@ export class Selector {
         const document = this.editor.document;
         const fullText = document?.getText().split(/\n|\r\n|\r/);
         const fullyQualifiedModules = fullText?.reduce((results: any[], lineText) => {
-            const isLook = lineText.search(/package [A-Za-z0-9:]+;/) === -1 &&
-                lineText.search(/use [A-Za-z0-9:]+;/) === -1;
+            const isLook = lineText.search(AutoUseRegex.PACKAGE) === -1 &&
+                lineText.search(AutoUseRegex.USE) === -1;
             if (isLook) {
                 // e.g) Hoge::Foo->bar
-                const methodModuleMatches = lineText.matchAll(/([A-Z][a-z0-9]*(::)?)+->/);
+                const methodModuleMatches = lineText.matchAll(AutoUseRegex.METHOD_MODULE);
                 const methodModuleMatch = [...methodModuleMatches][0];
                 // e.g) Hoge::Foo::bar
-                const subModuleMatches = lineText.matchAll(/(([A-Z][a-z0-9]*(::)?)+)([a-z0-9_]+)(\(|;)/);
+                const subModuleMatches = lineText.matchAll(AutoUseRegex.SUB_MODULE);
                 const subModuleMatch = [...subModuleMatches][0];
 
                 if (methodModuleMatch) {
@@ -81,14 +83,14 @@ export class Selector {
     public getDeclaredModule(): string[] | undefined {
         const document = this.editor.document;
         const fullText = document?.getText();
-        const useMatches = fullText?.match(/use [A-Za-z0-9:]+;/g);
+        const useMatches = fullText?.match(AutoUseRegex.USE);
         return useMatches?.map(u => u.replace('use ', '').replace(';', ''));
     }
 
     public getDeclaredModuleSub(): ModuleSubObject[] | undefined {
         const document = this.editor.document;
         const fullText = document?.getText();
-        const useSubMatches = fullText?.match(/use [A-Za-z0-9:]+ qw(\/|\()(\s*\w+\s*)*(\/|\));/g);
+        const useSubMatches = fullText?.match(AutoUseRegex.USE_SUB);
 
         return useSubMatches?.map(u => {
             const packageName = u
