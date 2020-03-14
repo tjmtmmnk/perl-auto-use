@@ -18,34 +18,39 @@ export class AutoUse {
         return 'use ' + packageName + ' qw(' + subListStr + ');';
     }
 
-    public insertUseStatementByName(name: string): void {
-        const importObjects = DB.findByName(name);
-        if (importObjects.length > 0) {
-            const packageName = importObjects[0].packageName;
-            const declaredModuleSub = this.selector.getDeclaredModuleSub();
-            const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
-            const subList = alreadyDeclaredModuleSub ? alreadyDeclaredModuleSub[0].subList.concat([name]) : [name];
-            const useBuilder = this.useBuilder(packageName, subList);
-            if (alreadyDeclaredModuleSub) {
-                const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));`;
-                this.selector.deleteByRegex(RegExp(regex, 'g'))
-                    .then(() => this.selector.insertUseStatements([useBuilder]));
+    public insertUseStatementByNames(names: string[]): Thenable<boolean> {
+        let useStatements: string[] = [];
+        for (const name of names) {
+            const importObjects = DB.findByName(name);
+            if (importObjects.length > 0) {
+                const packageName = importObjects[0].packageName;
+                const declaredModuleSub = this.selector.getDeclaredModuleSub();
+                const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
+                const subList = alreadyDeclaredModuleSub ? alreadyDeclaredModuleSub[0].subList.concat([name]) : [name];
+                const useStatement = this.useBuilder(packageName, subList);
+                if (alreadyDeclaredModuleSub) {
+                    const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));`;
+                    this.selector.deleteByRegex(RegExp(regex, 'g'))
+                        .then(() => this.selector.insertUseStatements([useStatement]));
+                } else {
+                    useStatements.push(useStatement);
+                }
             }
-            this.selector.insertUseStatements([useBuilder]);
         }
+        return this.selector.insertUseStatements(useStatements);
     }
 
-    public insertUseStatementsBySearch(): void {
+    private insertFullyQualifiedModule(): Thenable<boolean> {
         const declaredUse = this.selector.getDeclaredModule();
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
         const notDeclaredModule = declaredUse === undefined ? fullyQualifiedModules : fullyQualifiedModules?.filter(fqm => !declaredUse?.includes(fqm));
         const useStatements = notDeclaredModule?.map(us => this.useBuilder(us, undefined));
 
-        if (useStatements === undefined) { return; }
-        this.selector.insertUseStatements(useStatements);
+        if (useStatements === undefined) { return Promise.reject('some error'); }
+        return this.selector.insertUseStatements(useStatements);
     }
 
-    public insertUseStatementsBySplit(): void {
+    private insetLibraryModule(): Thenable<boolean> {
         const fullText = this.selector.getFullText();
 
         const tokensInFullText = fullText
@@ -56,8 +61,12 @@ export class AutoUse {
             );
 
         const uniqueTokensInFullText = new Set<string>(tokensInFullText);
-        for (const token of uniqueTokensInFullText) {
-            this.insertUseStatementByName(token);
-        }
+        return this.insertUseStatementByNames([...uniqueTokensInFullText]);
+    }
+
+    public insertModules(): void {
+        this.insertFullyQualifiedModule().then(() => {
+            this.insetLibraryModule();
+        });
     }
 }

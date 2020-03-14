@@ -23,30 +23,16 @@ export class Core {
             console.log(DB.all());
         });
 
-        // select word for use, search for perl library database and insert use statement
-        const selectUseCommand = vscode.commands.registerCommand('extension.selectUse', () => {
-            const editor = vscode.window.activeTextEditor;
-
-            if (editor === undefined) { return; }
-
-            const selector = new Selector(editor);
-            const selectText = selector.getSelectText();
-            const autoUse = new AutoUse(selector);
-            autoUse.insertUseStatementByName(selectText);
-        });
-
-        // search fully qualified subroutines, and insert use statement
-        const searchUseCommand = vscode.commands.registerCommand('extension.searchUse', () => {
+        const autoUseCommand = vscode.commands.registerCommand('extension.autoUse', () => {
             const editor = vscode.window.activeTextEditor;
 
             if (editor === undefined) { return; }
 
             const selector = new Selector(editor);
             const autoUse = new AutoUse(selector);
-            autoUse.insertUseStatementsBySearch();
-            autoUse.insertUseStatementsBySplit();
+            autoUse.insertModules();
         });
 
-        this.context.subscriptions.push(scanCommand, showDBCommand, selectUseCommand, searchUseCommand);
+        this.context.subscriptions.push(scanCommand, showDBCommand, autoUseCommand);
     }
 }
