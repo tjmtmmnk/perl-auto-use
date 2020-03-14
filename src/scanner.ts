@@ -2,7 +2,7 @@ import { readFile } from 'fs';
 import * as vscode from 'vscode';
 
 import { DB } from './db';
-import { AutoUseRegex } from './regex';
+import { AutoUseRegex } from './autoUseRegex';
 
 export class Scanner {
     private filesToScan: string;
