@@ -2,7 +2,7 @@
 vscode extention for perl auto use
 
 ## Naming Rule
-- This extension conforms to Perl's naming rule (https://perldoc.perl.org/perlstyle.html)
+- This extension conforms to Perl's style guide (https://perldoc.perl.org/perlstyle.html)
   - Subroutine is all lowercase
   - No space between function name and opening parenthesis
   - No space before semicolon
@@ -10,9 +10,13 @@ vscode extention for perl auto use
 
 ## Plan
 ### v1
-- select function which want to use and execute command for `use` the function
+- complement `use` function automatically without executing commands
 - specify the directory for forecast functions
+- only forecast target exported by `Exporter` Module (`@EXPORT,@EXPORT_OK`)
+  - does not work well if a function to get a function name in package is specified
+    - e.g) https://metacpan.org/pod/Module::Functions
 
 ### v2
-- complement `use` function automatically without executing commands
+- coressponding to a function to get a function name in package
+
 - cache the function forecast options

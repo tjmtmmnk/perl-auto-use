@@ -12,8 +12,7 @@
 	"activationEvents": [
 		"onCommand:extension.scanFiles",
 		"onCommand:extension.showDB",
-		"onCommand:extension.selectUse",
-		"onCommand:extension.searchUse"
+		"onCommand:extension.autoUse"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -27,12 +26,8 @@
 				"title": "Show DB"
 			},
 			{
-				"command": "extension.selectUse",
-				"title": "Select and exec auto use"
-			},
-			{
-				"command": "extension.searchUse",
-				"title": "Search and exec use"
+				"command": "extension.autoUse",
+				"title": "Auto use (exec after scanning)"
 			}
 		],
 		"configuration": {
