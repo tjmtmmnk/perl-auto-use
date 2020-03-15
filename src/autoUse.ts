@@ -62,8 +62,12 @@ export class AutoUse {
         const fullText = this.selector.getFullText();
 
         const tokensInFullText = fullText
+            .replace(/ +/, ' ')
             .split(AutoUseRegex.DELIMITER)
-            .filter(token =>
+            .filter(s => s !== '') // guarantee the order hash_key => xxx
+            .filter((token, idx, arr) =>
+                idx + 1 < arr.length &&
+                arr[idx + 1] !== '=>' &&
                 RegExp(AutoUseRegex.EXACT_MATCH_WORD_LOWER_CASE).test(token) && // This filter variable symbol $@%
                 !RegExp(AutoUseRegex.DECLARE).test(token)
             );
