@@ -59,10 +59,9 @@ export class Selector {
             const isLook = lineText.search(AutoUseRegex.PACKAGE) === -1 &&
                 lineText.search(AutoUseRegex.USE) === -1;
             if (isLook) {
-                // e.g) Hoge::Foo->bar
                 const methodModuleMatches = lineText.matchAll(AutoUseRegex.METHOD_MODULE);
                 const methodModuleMatch = [...methodModuleMatches][0];
-                // e.g) Hoge::Foo::bar
+
                 const subModuleMatches = lineText.matchAll(AutoUseRegex.SUB_MODULE);
                 const subModuleMatch = [...subModuleMatches][0];
 
