@@ -33,7 +33,7 @@ export class AutoUse {
                 const subList = alreadyDeclaredSubList.length > 0
                     ? (alreadyDeclaredSubList.includes(name)
                         ? alreadyDeclaredSubList
-                        : alreadyDeclaredSubList.concat([name]))
+                        : [...alreadyDeclaredSubList, name])
                     : [name];
                 const useStatement = this.useBuilder(packageName, subList);
                 if (alreadyDeclaredModuleSub !== undefined) {

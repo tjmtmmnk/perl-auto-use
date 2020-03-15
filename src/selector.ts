@@ -53,32 +53,19 @@ export class Selector {
 
     public getFullyQualifiedModules(): string[] | undefined {
         const fullText = this.getFullText();
-        const fullTextSplittedByNewLine = fullText.split(/\n|\r\n|\r/);
 
-        const fullyQualifiedModules = fullTextSplittedByNewLine?.reduce((modules: string[], lineText) => {
-            const isLook = lineText.search(AutoUseRegex.PACKAGE) === -1 &&
-                lineText.search(AutoUseRegex.USE) === -1;
-            if (isLook) {
-                const methodModuleMatches = lineText.matchAll(AutoUseRegex.METHOD_MODULE);
-                const methodModuleMatch = [...methodModuleMatches][0];
+        // avoid matching `use` and `package` statements for sub module match
+        const fullTextExcludePackageAndUse = fullText.replace(AutoUseRegex.PACKAGE, '').replace(AutoUseRegex.USE, '');
 
-                const subModuleMatches = lineText.matchAll(AutoUseRegex.SUB_MODULE);
-                const subModuleMatch = [...subModuleMatches][0];
+        const methodModuleMatches = fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE);
+        const methodModules = [...methodModuleMatches].map(mmm => mmm[0].replace('->', ''));
+        const uniqueMethodModules = new Set(methodModules);
 
-                if (methodModuleMatch) {
-                    const moduleName = methodModuleMatch[0].replace('->', '');
-                    modules.push(moduleName);
-                }
-                if (subModuleMatch) {
-                    const moduleName = subModuleMatch[1].replace(/::$/, '');
-                    modules.push(moduleName);
-                }
-            }
-            return modules;
-        }, []);
+        const subModuleMatches = fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE);
+        const subModules = [...subModuleMatches].map(smm => smm[1].replace(/::$/, ''));
+        const uniqueSubModules = new Set(subModules);
 
-        const uniqueFullyQualifiedModules: Set<string> = new Set(fullyQualifiedModules);
-        return [...uniqueFullyQualifiedModules].sort();
+        return [...uniqueMethodModules, ...uniqueSubModules].sort();
     }
 
     public getDeclaredModule(): string[] | undefined {

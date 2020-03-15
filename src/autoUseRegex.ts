@@ -15,10 +15,10 @@ export class AutoUseRegex {
     static readonly USE_SUB = /use [A-Za-z0-9:]+ qw(\/|\()(\s*\w+\s*)*(\/|\));/g;
 
     // e.g) Hoge::Fuga->bar;
-    static readonly METHOD_MODULE = /([A-Z][a-z0-9]*(::)?)+->/;
+    static readonly METHOD_MODULE = /([A-Z][a-z0-9]*(::)?)+->/g;
 
     // e.g) Hoge::Fuga->bar();
-    static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)([a-z0-9_]+)(\(|;)/;
+    static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)([a-z0-9_]+)(\(|;)/g;
 
     static readonly DELIMITER = /\s|\(/g;
 
