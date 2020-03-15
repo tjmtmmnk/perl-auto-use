@@ -42,7 +42,7 @@ export class Selector {
     }
 
     // insert use statement next line of 'package'
-    public insertUseStatements(useStatements: string[]): Thenable<boolean> {
+    public async insertUseStatements(useStatements: string[]): Promise<boolean> {
         const ranges = this.getRangesByRegex(AutoUseRegex.PACKAGE);
 
         if (ranges === []) { return Promise.reject(new Error('no package found')); }
@@ -113,7 +113,7 @@ export class Selector {
         });
     }
 
-    public deleteByRegex(regex: RegExp): Thenable<boolean> {
+    public async deleteByRegex(regex: RegExp): Promise<boolean> {
         const ranges = this.getRangesByRegex(regex);
 
         if (ranges === []) { return Promise.reject('not match'); }

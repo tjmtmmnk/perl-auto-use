@@ -11,6 +11,7 @@ export class AutoUse {
 
     private useBuilder(packageName: string, subList: string[] | undefined): string {
         if (subList === undefined) { return 'use ' + packageName + ';'; }
+
         let subListStr = "";
         for (let i = 0; i < subList.length; i++) {
             subListStr += (i !== subList.length - 1 ? subList[i] + ' ' : subList[i]);
@@ -18,21 +19,28 @@ export class AutoUse {
         return 'use ' + packageName + ' qw(' + subListStr + ');';
     }
 
-    public insertUseStatementByNames(names: string[]): Thenable<boolean> {
+    private async insertUseStatementByNames(names: string[]): Promise<boolean> {
         let useStatements: string[] = [];
+        const declaredModuleSub = this.selector.getDeclaredModuleSub();
+
         for (const name of names) {
             const importObjects = DB.findByName(name);
+
             if (importObjects.length > 0) {
                 const packageName = importObjects[0].packageName;
-                const declaredModuleSub = this.selector.getDeclaredModuleSub();
                 const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
-                const subList = alreadyDeclaredModuleSub ? alreadyDeclaredModuleSub[0].subList.concat([name]) : [name];
+                const alreadyDeclaredSubList = alreadyDeclaredModuleSub ? alreadyDeclaredModuleSub[0].subList : [];
+                const subList = alreadyDeclaredSubList.length > 0
+                    ? (alreadyDeclaredSubList.includes(name)
+                        ? alreadyDeclaredSubList
+                        : alreadyDeclaredSubList.concat([name]))
+                    : [name];
                 const useStatement = this.useBuilder(packageName, subList);
-                if (alreadyDeclaredModuleSub) {
-                    const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));`;
-                    this.selector.deleteByRegex(RegExp(regex, 'g'))
-                        .then(() => this.selector.insertUseStatements([useStatement]));
-                } else {
+                if (alreadyDeclaredModuleSub !== undefined) {
+                    const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));\n|\r\n|\r`;
+                    await this.selector.deleteByRegex(RegExp(regex, 'g'));
+                }
+                if (useStatement !== '') {
                     useStatements.push(useStatement);
                 }
             }
@@ -40,7 +48,7 @@ export class AutoUse {
         return this.selector.insertUseStatements(useStatements);
     }
 
-    private insertFullyQualifiedModule(): Thenable<boolean> {
+    private async insertFullyQualifiedModule(): Promise<boolean> {
         const declaredUse = this.selector.getDeclaredModule();
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
         const notDeclaredModule = declaredUse === undefined ? fullyQualifiedModules : fullyQualifiedModules?.filter(fqm => !declaredUse?.includes(fqm));
@@ -50,7 +58,7 @@ export class AutoUse {
         return this.selector.insertUseStatements(useStatements);
     }
 
-    private insetLibraryModule(): Thenable<boolean> {
+    private async insetLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
         const tokensInFullText = fullText
@@ -64,9 +72,8 @@ export class AutoUse {
         return this.insertUseStatementByNames([...uniqueTokensInFullText]);
     }
 
-    public insertModules(): void {
-        this.insertFullyQualifiedModule().then(() => {
-            this.insetLibraryModule();
-        });
+    public async insertModules(): Promise<void> {
+        await this.insertFullyQualifiedModule();
+        await this.insetLibraryModule();
     }
 }
