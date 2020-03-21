@@ -1,12 +1,17 @@
 # auto-use
 vscode extention for perl auto use
 
-## Naming Rule
+## Style
 - This extension conforms to Perl's style guide (https://perldoc.perl.org/perlstyle.html)
   - Subroutine is all lowercase
   - No space between function name and opening parenthesis
   - No space before semicolon
   - Module is PascalCase
+
+## Setting
+- `filesToScan`: Perl module directory for scanning
+  - Multiple directory can be specified
+    - For cpan module and test module etc
 
 ## Plan
 ### v1
