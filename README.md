@@ -11,6 +11,7 @@ vscode extention for perl auto use
 ## Setting
 - `filesToScan`: Perl module directory for scanning
   - Multiple directory can be specified
+    - Separate with white space
     - For cpan module and test module etc
 
 ## Plan
