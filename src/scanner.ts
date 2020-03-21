@@ -1,8 +1,8 @@
-import { readFile } from 'fs';
 import * as vscode from 'vscode';
 
-import { DB } from './db';
 import { AutoUseRegex } from './autoUseRegex';
+import { DB } from './db';
+import { readFile } from 'fs';
 
 export class Scanner {
     private filesToScan: string;
@@ -28,29 +28,32 @@ export class Scanner {
                 return console.log(err);
             }
 
-            const exportMatches = data.match(AutoUseRegex.EXPORT);
-            const exportOKMatches = data.match(AutoUseRegex.EXPORT_OK);
+            const packageNames = [...data.matchAll(AutoUseRegex.PACKAGE)];
 
-            const packageNames = data.match(AutoUseRegex.PACKAGE);
-            const packageName = packageNames ? packageNames[0].replace('package ', '').replace(';', '') : '';
+            if (packageNames === undefined) {
+                console.log("package name is not found");
+                return;
+            }
 
-            if (exportMatches) {
-                const subs: string[] = exportMatches[0]
-                    .replace(/@EXPORT(\s*=\s*)qw(\/|\()/, '')
-                    .replace(/(\/|\));/, '')
-                    .split(/\s/)
-                    .filter(s => s !== '');
+            const packageName = packageNames[0][1];
 
+            const exportMatches = [...data.matchAll(AutoUseRegex.EXPORT)];
+            const exportOKMatches = [...data.matchAll(AutoUseRegex.EXPORT_OK)];
+            const exportPublicSubMatches = [...data.matchAll(AutoUseRegex.GET_PUBLIC_FUNCTIONS)];
+
+            if (exportMatches.length > 0) {
+                const subs: string[] = exportMatches[0][3].split(/\s/);
                 subs.forEach(sub => DB.add(sub, packageName, file, workspace));
             }
 
-            if (exportOKMatches) {
-                const subs: string[] = exportOKMatches[0]
-                    .replace(/@EXPORT_OK(\s*=\s*)qw(\/|\()/, '')
-                    .replace(/(\/|\));/, '')
-                    .split(/\s/)
-                    .filter(s => s !== '');
+            if (exportOKMatches.length > 0) {
+                const subs: string[] = exportOKMatches[0][3].split(/\s/);
+                subs.forEach(sub => DB.add(sub, packageName, file, workspace));
+            }
 
+            if (exportPublicSubMatches.length > 0) {
+                const subMatches = [...data.matchAll(AutoUseRegex.SUB_DECLARE)];
+                const subs: string[] = subMatches.map(sm => sm[1]);
                 subs.forEach(sub => DB.add(sub, packageName, file, workspace));
             }
         });
