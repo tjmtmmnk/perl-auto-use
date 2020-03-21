@@ -9,6 +9,7 @@ export class AutoUseRegex {
     static readonly GET_PUBLIC_FUNCTIONS = /@EXPORT\s*=\s*get_public_functions\(?\)?;/;
 
     // e.g) sub hoge_fuga {}
+    // not match private function start from '_' e.g. sub _hoge {}
     static readonly SUB_DECLARE = /sub (([a-z0-9][a-z0-9_]+))(\s*\{)/g;
 
     // e.g) package Hoge::Fuga;
