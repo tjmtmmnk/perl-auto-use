@@ -12,14 +12,20 @@ export class Scanner {
     }
 
     public scan(workspace: vscode.WorkspaceFolder | undefined): void {
-        const scanLocation: vscode.GlobPattern = workspace === undefined ? this.filesToScan : new vscode.RelativePattern(workspace, this.filesToScan);
+        const scanLocations: vscode.GlobPattern[] = this.filesToScan
+            .split(' ')
+            .map(fts =>
+                workspace === undefined ? fts : new vscode.RelativePattern(workspace, fts)
+            );
 
-        vscode.workspace.findFiles(scanLocation, null, 99999)
-            .then(files => {
-                files.forEach(file => {
-                    this.extractExportFunctions(workspace, file);
+        scanLocations.forEach(sl => {
+            vscode.workspace.findFiles(sl, null, 99999)
+                .then(files => {
+                    files.forEach(file => {
+                        this.extractExportFunctions(workspace, file);
+                    });
                 });
-            });
+        });
     }
 
     private extractExportFunctions(workspace: vscode.WorkspaceFolder | undefined, file: vscode.Uri): void {
