@@ -2,18 +2,21 @@ import * as vscode from 'vscode';
 
 import { DB, ImportObject } from './db';
 
+import { AutoUseContext } from './autoUseContext';
 import { Selector } from './selector';
 import { UseBuilder } from './useBuilder';
 
 const COMMAND_INSERT_SELECT_USE = 'extension.insertSelectUse';
 
 export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
-    constructor(context: vscode.ExtensionContext, selector: Selector) {
-        super(context, selector);
+    constructor(context: AutoUseContext) {
+        super(context);
+
         const insertSelectUseCommand = vscode.commands.registerCommand(COMMAND_INSERT_SELECT_USE, (importObjects: ImportObject[]) => {
             this.insertUseStatementByImportObjects(importObjects);
         });
-        context.subscriptions.push(insertSelectUseCommand);
+
+        context.extensionContext.subscriptions.push(insertSelectUseCommand);
     }
 
     public provideCodeActions(document: vscode.TextDocument, selection: vscode.Selection, ctx: vscode.CodeActionContext): vscode.Command[] | undefined {

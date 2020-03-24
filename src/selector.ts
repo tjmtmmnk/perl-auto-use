@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 
+import { AutoUseContext } from './autoUseContext';
 import { AutoUseRegex } from './autoUseRegex';
 
 interface ModuleSubObject {
@@ -8,7 +9,7 @@ interface ModuleSubObject {
 }
 
 export class Selector {
-    constructor(private context: vscode.ExtensionContext, private editor: vscode.TextEditor) { }
+    constructor(private context: AutoUseContext) { }
 
     private getRangesByRegex(regex: RegExp): vscode.Range[] {
         const fullText = this.getFullText();
@@ -20,21 +21,21 @@ export class Selector {
         return [...matches].reduce((ranges: vscode.Range[], match) => {
             const startIndex = match.index !== undefined ? match.index : 0;
             const endIndex = match.index !== undefined ? match.index + match[0].length : 0;
-            const startPosition = this.editor.document.positionAt(startIndex);
-            const endPosition = this.editor.document.positionAt(endIndex);
+            const startPosition = this.context.editor.document.positionAt(startIndex);
+            const endPosition = this.context.editor.document.positionAt(endIndex);
             ranges.push(new vscode.Range(startPosition, endPosition));
             return ranges;
         }, []);
     }
 
     public getFullText(): string {
-        return this.editor.document.getText();
+        return this.context.editor.document.getText();
     }
 
     public getSelectText(): string {
-        const document = this.editor.document;
+        const document = this.context.editor.document;
         if (document === undefined) { return ''; }
-        return document.getText(this.editor.selection);
+        return document.getText(this.context.editor.selection);
     }
 
     // insert use statement next line of 'package'
@@ -44,7 +45,7 @@ export class Selector {
         if (ranges === []) { return Promise.reject(new Error('no package found')); }
 
         const endPosition = new vscode.Position(ranges[0].end.line + 1, 0);
-        return this.editor.edit(e => useStatements.forEach(useStatement => e.insert(endPosition, useStatement + "\n")));
+        return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(endPosition, useStatement + "\n")));
     }
 
     public getFullyQualifiedModules(): string[] | undefined {
@@ -100,6 +101,6 @@ export class Selector {
 
         if (ranges === []) { return Promise.reject('not match'); }
 
-        return this.editor.edit(e => ranges.forEach(range => e.delete(range)));
+        return this.context.editor.edit(e => ranges.forEach(range => e.delete(range)));
     }
 }

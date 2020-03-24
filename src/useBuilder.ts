@@ -1,10 +1,16 @@
 import * as vscode from 'vscode';
 
 import { DB, ImportObject } from './db';
+
+import { AutoUseContext } from './autoUseContext';
 import { Selector } from './selector';
 
 export class UseBuilder {
-    constructor(protected context: vscode.ExtensionContext, protected selector: Selector) { }
+    protected selector: Selector;
+
+    constructor(protected context: AutoUseContext) {
+        this.selector = new Selector(context);
+    }
 
     protected buildUseStatement(packageName: string, subList: string[] | undefined): string {
         if (subList === undefined) { return 'use ' + packageName + ';'; }

@@ -1,6 +1,6 @@
 import { AutoUseRegex } from './autoUseRegex';
-import { UseBuilder } from './useBuilder';
 import { DB } from './db';
+import { UseBuilder } from './useBuilder';
 
 export class AutoUse extends UseBuilder {
     private async insertFullyQualifiedModule(): Promise<boolean> {
