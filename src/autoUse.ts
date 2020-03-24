@@ -1,5 +1,6 @@
 import { AutoUseRegex } from './autoUseRegex';
 import { UseBuilder } from './useBuilder';
+import { DB } from './db';
 
 export class AutoUse extends UseBuilder {
     private async insertFullyQualifiedModule(): Promise<boolean> {
@@ -32,7 +33,11 @@ export class AutoUse extends UseBuilder {
             );
 
         const uniqueTokensInFullText = new Set<string>(tokensInFullText);
-        return this.insertUseStatementByNames([...uniqueTokensInFullText]);
+        const importObjects = [...uniqueTokensInFullText]
+            .map(ut => DB.findByName(ut))
+            .filter(objects => objects.length === 1)
+            .flat(1);
+        return this.insertUseStatementByImportObjects(importObjects);
     }
 
     public async insertModules(): Promise<void> {
