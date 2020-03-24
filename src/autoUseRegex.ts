@@ -16,10 +16,10 @@ export class AutoUseRegex {
     static readonly PACKAGE = /package ([A-Za-z0-9:]+);/;
 
     // e.g) use Hoge::Fuga;
-    static readonly USE = /use [A-Za-z0-9:]+;/g;
+    static readonly USE = /use ([A-Za-z0-9:]+);/g;
 
     // e.g) use Hoge::Fuga qw(bar);
-    static readonly USE_SUB = /use [A-Za-z0-9:]+ qw(\/|\()(\s*\w+\s*)*(\/|\));/g;
+    static readonly USE_SUB = /use ([A-Za-z0-9:]+) qw(\/|\()(\s*\w+\s*)*(\/|\));/g;
 
     // e.g) Hoge::Fuga->bar;
     static readonly METHOD_MODULE = /([A-Z][a-z0-9]*(::)?)+->/g;

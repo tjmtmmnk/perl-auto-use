@@ -20,7 +20,7 @@ export class UseBuilder {
         return 'use ' + packageName + ' qw(' + subListStr + ');';
     }
 
-    public async insertUseStatementByImportObjects(importObjects: ImportObject[]): Promise<boolean> {
+    protected async insertUseStatementByImportObjects(importObjects: ImportObject[]): Promise<boolean> {
         let useStatements: string[] = [];
         const declaredModuleSub = this.selector.getDeclaredModuleSub();
 

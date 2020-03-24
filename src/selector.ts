@@ -67,23 +67,18 @@ export class Selector {
 
     public getDeclaredModule(): string[] | undefined {
         const fullText = this.getFullText();
-        const useMatches = fullText.match(AutoUseRegex.USE);
-        return useMatches?.map(u => u.replace('use ', '').replace(';', ''));
+        const useMatches = [...fullText.matchAll(AutoUseRegex.USE)];
+        return useMatches?.map(um => um[1]);
     }
 
     public getDeclaredModuleSub(): ModuleSubObject[] | undefined {
         const fullText = this.getFullText();
-        const useSubMatches = fullText.match(AutoUseRegex.USE_SUB);
+        const useSubMatches = [...fullText.matchAll(AutoUseRegex.USE_SUB)];
 
-        return useSubMatches?.map(u => {
-            const packageName = u
-                .replace('use ', '')
-                .replace(/ qw(\/|\()(\s*\w+\s*)*(\/|\));/, '');
+        return useSubMatches?.map(usm => {
+            const packageName = usm[1];
 
-            const subList = u
-                .replace(/use [A-Za-z0-9:]+ /, '')
-                .replace(/qw(\/|\()/, '')
-                .replace(/(\/|\));/, '')
+            const subList = usm[3]
                 .split(/\s/)
                 .filter(s => s !== '');
 
