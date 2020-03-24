@@ -3,12 +3,15 @@ import * as vscode from 'vscode';
 import { DB, ImportObject } from './db';
 
 import { AutoUseContext } from './autoUseContext';
-import { Selector } from './selector';
 import { UseBuilder } from './useBuilder';
 
 const COMMAND_INSERT_SELECT_USE = 'extension.insertSelectUse';
 
 export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
+    public static readonly providedCodeActionKinds = [
+        vscode.CodeActionKind.QuickFix
+    ];
+
     constructor(context: AutoUseContext) {
         super(context);
 
@@ -29,9 +32,9 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
     private actionHandler(importObjects: ImportObject[]): vscode.Command[] {
         return importObjects.map(io => {
             const command: vscode.Command = {
-                title: `${io.name} from ${io.packageName}`,
+                title: `$import ${io.name} from ${io.packageName}`,
                 command: COMMAND_INSERT_SELECT_USE,
-                arguments: [io]
+                arguments: [[io]]
             };
             return command;
         });

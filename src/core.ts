@@ -15,7 +15,10 @@ export class Core {
     }
 
     public attatchCommands(): void {
-        const selectUseAction = vscode.languages.registerCodeActionsProvider('perl', new SelectUse(this.context));
+        const selectUseAction = vscode.languages.registerCodeActionsProvider('perl', new SelectUse(this.context), {
+            providedCodeActionKinds: SelectUse.providedCodeActionKinds
+        });
+
         const scanCommand = vscode.commands.registerCommand('extension.scanFiles', () => {
             vscode.window.showInformationMessage('Hello World!');
             const scanner = new Scanner(this.context, vscode.workspace.getConfiguration('autouse'));
@@ -31,11 +34,11 @@ export class Core {
 
             if (editor === undefined) { return; }
 
-            const selector = new Selector(this.context);
             const autoUse = new AutoUse(this.context);
+
             autoUse.insertModules();
         });
 
-        this.context.extensionContext.subscriptions.push(scanCommand, showDBCommand, autoUseCommand);
+        this.context.extensionContext.subscriptions.push(scanCommand, showDBCommand, autoUseCommand, selectUseAction);
     }
 }
