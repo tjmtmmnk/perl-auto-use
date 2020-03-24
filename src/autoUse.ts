@@ -1,3 +1,5 @@
+import * as vscode from 'vscode';
+
 import { AutoUseRegex } from './autoUseRegex';
 import { DB } from './db';
 import { UseBuilder } from './useBuilder';
@@ -34,10 +36,19 @@ export class AutoUse extends UseBuilder {
 
         const uniqueTokensInFullText = new Set<string>(tokensInFullText);
         const importObjects = [...uniqueTokensInFullText]
-            .map(ut => DB.findByName(ut))
+            .map(ut => DB.findByName(ut));
+
+        const notDuplicateImportObjects = importObjects
             .filter(objects => objects.length === 1)
             .flat(1);
-        return this.insertUseStatementByImportObjects(importObjects);
+
+        const duplicateImportObjects = importObjects
+            .filter(objects => objects.length > 1)
+            .flat(1);
+
+        duplicateImportObjects.forEach(dio => vscode.window.showWarningMessage(`${dio.name} is duplicated. Please solve individually`));
+
+        return this.insertUseStatementByImportObjects(notDuplicateImportObjects);
     }
 
     public async insertModules(): Promise<void> {

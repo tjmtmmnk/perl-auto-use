@@ -5,7 +5,6 @@ import { AutoUseContext } from './autoUseContext';
 import { DB } from './db';
 import { Scanner } from './scanner';
 import { SelectUse } from './selectUse';
-import { Selector } from './selector';
 
 export class Core {
     private workspace: vscode.WorkspaceFolder | undefined;
@@ -20,9 +19,9 @@ export class Core {
         });
 
         const scanCommand = vscode.commands.registerCommand('extension.scanFiles', () => {
-            vscode.window.showInformationMessage('Hello World!');
             const scanner = new Scanner(this.context, vscode.workspace.getConfiguration('autouse'));
             scanner.scan(this.workspace);
+            vscode.window.showInformationMessage('Scan done!!');
         });
 
         const showDBCommand = vscode.commands.registerCommand('extension.showDB', () => {

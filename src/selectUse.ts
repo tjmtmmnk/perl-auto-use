@@ -32,7 +32,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
     private actionHandler(importObjects: ImportObject[]): vscode.Command[] {
         return importObjects.map(io => {
             const command: vscode.Command = {
-                title: `$import ${io.name} from ${io.packageName}`,
+                title: `import ${io.name} from ${io.packageName}`,
                 command: COMMAND_INSERT_SELECT_USE,
                 arguments: [[io]]
             };
