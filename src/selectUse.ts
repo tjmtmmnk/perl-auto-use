@@ -23,6 +23,12 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
     }
 
     public provideCodeActions(document: vscode.TextDocument, selection: vscode.Selection, ctx: vscode.CodeActionContext): vscode.Command[] | undefined {
+        const editor = vscode.window.activeTextEditor;
+
+        if (editor !== undefined) {
+            this.context.editor = editor;
+        }
+
         const selectText = document.getText(selection);
         const importObjects = DB.findByName(selectText);
         if (!this.canHandle(importObjects)) { return; }
