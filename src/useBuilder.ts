@@ -1,6 +1,4 @@
-import * as vscode from 'vscode';
-
-import { DB, ImportObject } from './db';
+import { ImportObject } from './db';
 
 import { AutoUseContext } from './autoUseContext';
 import { Selector } from './selector';
