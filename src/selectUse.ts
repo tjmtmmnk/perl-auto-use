@@ -25,7 +25,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
     public provideCodeActions(document: vscode.TextDocument, selection: vscode.Selection, ctx: vscode.CodeActionContext): vscode.Command[] | undefined {
         const selectText = document.getText(selection);
         const importObjects = DB.findByName(selectText);
-        if (importObjects.length <= 1) { return; }
+        if (!this.canHandle(importObjects)) { return; }
         return this.actionHandler(importObjects);
     }
 
@@ -38,5 +38,21 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
             };
             return command;
         });
+    }
+
+    private canHandle(importObjects: ImportObject[]): boolean {
+        if (importObjects.length <= 1) { return false; }
+
+        const declaredModuleSub = this.selector.getDeclaredModuleSub();
+
+        if (declaredModuleSub === undefined) { return true; }
+
+        const subName = importObjects[0].name;
+
+        const alreadyDeclaredSub = declaredModuleSub.filter(dms =>
+            dms.subList.includes(subName)
+        ).length > 0;
+
+        return alreadyDeclaredSub ? false : true;
     }
 }
