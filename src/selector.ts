@@ -8,11 +8,7 @@ interface ModuleSubObject {
 }
 
 export class Selector {
-    private editor: vscode.TextEditor;
-
-    constructor(private _editor: vscode.TextEditor) {
-        this.editor = _editor;
-    }
+    constructor(private context: vscode.ExtensionContext, private editor: vscode.TextEditor) { }
 
     private getRangesByRegex(regex: RegExp): vscode.Range[] {
         const fullText = this.getFullText();

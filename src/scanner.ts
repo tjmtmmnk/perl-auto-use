@@ -7,7 +7,7 @@ import { readFile } from 'fs';
 export class Scanner {
     private filesToScan: string;
 
-    constructor(private config: vscode.WorkspaceConfiguration) {
+    constructor(private context: vscode.ExtensionContext, private config: vscode.WorkspaceConfiguration) {
         this.filesToScan = this.config.get<string>('filesToScan', '**/lib/**/*.pm');
     }
 
