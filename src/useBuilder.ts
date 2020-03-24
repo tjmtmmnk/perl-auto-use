@@ -30,7 +30,7 @@ export class UseBuilder {
             const packageName = object.packageName;
             const subName = object.name;
             const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
-            const alreadyDeclaredSubList = alreadyDeclaredModuleSub ? alreadyDeclaredModuleSub[0].subList : [];
+            const alreadyDeclaredSubList = alreadyDeclaredModuleSub?.length ? alreadyDeclaredModuleSub[0].subList : [];
             const subList = alreadyDeclaredSubList.length > 0
                 ? (alreadyDeclaredSubList.includes(subName)
                     ? alreadyDeclaredSubList
