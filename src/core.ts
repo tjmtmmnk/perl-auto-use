@@ -1,22 +1,27 @@
 import * as vscode from 'vscode';
 
 import { AutoUse } from './autoUse';
+import { AutoUseContext } from './autoUseContext';
 import { DB } from './db';
 import { Scanner } from './scanner';
-import { Selector } from './selector';
+import { SelectUse } from './selectUse';
 
 export class Core {
     private workspace: vscode.WorkspaceFolder | undefined;
 
-    constructor(private context: vscode.ExtensionContext) {
+    constructor(private context: AutoUseContext) {
         this.workspace = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0] : undefined;
     }
 
     public attatchCommands(): void {
+        const selectUseAction = vscode.languages.registerCodeActionsProvider('perl', new SelectUse(this.context), {
+            providedCodeActionKinds: SelectUse.providedCodeActionKinds
+        });
+
         const scanCommand = vscode.commands.registerCommand('extension.scanFiles', () => {
-            vscode.window.showInformationMessage('Hello World!');
-            const scanner = new Scanner(vscode.workspace.getConfiguration('autouse'));
+            const scanner = new Scanner(this.context, vscode.workspace.getConfiguration('autouse'));
             scanner.scan(this.workspace);
+            vscode.window.showInformationMessage('Scan done!!');
         });
 
         const showDBCommand = vscode.commands.registerCommand('extension.showDB', () => {
@@ -28,11 +33,11 @@ export class Core {
 
             if (editor === undefined) { return; }
 
-            const selector = new Selector(editor);
-            const autoUse = new AutoUse(selector);
+            const autoUse = new AutoUse(this.context);
+
             autoUse.insertModules();
         });
 
-        this.context.subscriptions.push(scanCommand, showDBCommand, autoUseCommand);
+        this.context.extensionContext.subscriptions.push(scanCommand, showDBCommand, autoUseCommand, selectUseAction);
     }
 }

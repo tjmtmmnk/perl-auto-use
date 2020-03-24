@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 
+import { AutoUseContext } from './autoUseContext';
 import { AutoUseRegex } from './autoUseRegex';
 import { DB } from './db';
 import { readFile } from 'fs';
@@ -7,7 +8,7 @@ import { readFile } from 'fs';
 export class Scanner {
     private filesToScan: string;
 
-    constructor(private config: vscode.WorkspaceConfiguration) {
+    constructor(private context: AutoUseContext, private config: vscode.WorkspaceConfiguration) {
         this.filesToScan = this.config.get<string>('filesToScan', '**/lib/**/*.pm');
     }
 
