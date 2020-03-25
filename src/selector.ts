@@ -38,13 +38,14 @@ export class Selector {
         return document.getText(this.context.editor.selection);
     }
 
-    // insert use statement next line of 'package'
     public async insertUseStatements(useStatements: string[]): Promise<boolean> {
         const ranges = this.getRangesByRegex(AutoUseRegex.PACKAGE);
 
-        if (ranges === []) { return Promise.reject(new Error('no package found')); }
+        // insert use statement next line of 'package' if package name is defined, otherwise first line
+        const endPosition = ranges.length > 0
+            ? new vscode.Position(ranges[0].end.line + 1, 0)
+            : new vscode.Position(0, 0);
 
-        const endPosition = new vscode.Position(ranges[0].end.line + 1, 0);
         return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(endPosition, useStatement + "\n")));
     }
 
