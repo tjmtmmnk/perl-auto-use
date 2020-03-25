@@ -21,19 +21,21 @@ export class UseBuilder {
     }
 
     protected async insertUseStatementByImportObjects(importObjects: ImportObject[]): Promise<boolean> {
+        const packageNameToImportObjects = this.partitionByPackageName(importObjects);
+
         let useStatements: string[] = [];
         const declaredModuleSub = this.selector.getDeclaredModuleSub();
 
-        for (const object of importObjects) {
-            const packageName = object.packageName;
-            const subName = object.name;
+        for (const packageName of Object.keys(packageNameToImportObjects)) {
             const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
             const alreadyDeclaredSubList = alreadyDeclaredModuleSub?.length ? alreadyDeclaredModuleSub[0].subList : [];
-            const subList = alreadyDeclaredSubList.length > 0
-                ? (alreadyDeclaredSubList.includes(subName)
-                    ? alreadyDeclaredSubList
-                    : [...alreadyDeclaredSubList, subName])
-                : [subName];
+            const subList: string[] = alreadyDeclaredSubList.length > 0
+                ? packageNameToImportObjects[packageName]
+                    .filter(io => !alreadyDeclaredSubList.includes(io.name))
+                    .map(fio => fio.name)
+                    .concat(alreadyDeclaredSubList)
+                : packageNameToImportObjects[packageName].map(io => io.name);
+
             const useStatement = this.buildUseStatement(packageName, subList);
             if (alreadyDeclaredModuleSub !== undefined) {
                 const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));\n|\r\n|\r`;
@@ -44,5 +46,16 @@ export class UseBuilder {
             }
         }
         return this.selector.insertUseStatements(useStatements);
+    }
+
+    private partitionByPackageName(objects: ImportObject[]) {
+        let ret: { [index: string]: ImportObject[] } = {};
+        for (const object of objects) {
+            ret[object.packageName] = [];
+        }
+        for (const object of objects) {
+            ret[object.packageName].push(object);
+        }
+        return ret;
     }
 }
