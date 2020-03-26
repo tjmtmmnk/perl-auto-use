@@ -60,7 +60,7 @@ export class Selector {
         const uniqueMethodModules = new Set(methodModules);
 
         const subModuleMatches = fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE);
-        const subModules = [...subModuleMatches].map(smm => smm[1].replace(/::$/, ''));
+        const subModules = [...subModuleMatches].map(smm => smm[1]);
         const uniqueSubModules = new Set(subModules);
 
         return [...uniqueMethodModules, ...uniqueSubModules].sort();
