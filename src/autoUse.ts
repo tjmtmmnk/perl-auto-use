@@ -38,6 +38,9 @@ export class AutoUse extends UseBuilder {
         const importObjects = [...uniqueTokensInFullText]
             .map(ut => DB.findByName(ut));
 
+        const declaredModuleSub = this.selector.getDeclaredModuleSub();
+        const alreadyDeclaredSubList = declaredModuleSub?.flatMap(dms => dms.subList);
+
         const notDuplicateImportObjects = importObjects
             .filter(objects => objects.length === 1)
             .flat(1);
@@ -46,7 +49,11 @@ export class AutoUse extends UseBuilder {
             .filter(objects => objects.length > 1)
             .flat(1);
 
-        duplicateImportObjects.forEach(dio => vscode.window.showWarningMessage(`${dio.name} is duplicated. Please solve individually`));
+        duplicateImportObjects.forEach(dio => {
+            if (!alreadyDeclaredSubList?.includes(dio.name)) {
+                vscode.window.showWarningMessage(`${dio.name} is duplicated. Please solve individually`);
+            }
+        });
 
         return this.insertUseStatementByImportObjects(notDuplicateImportObjects);
     }

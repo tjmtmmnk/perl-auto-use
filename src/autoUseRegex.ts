@@ -24,8 +24,8 @@ export class AutoUseRegex {
     // e.g) Hoge::Fuga->bar;
     static readonly METHOD_MODULE = /([A-Z][a-z0-9]*(::)?)+->/g;
 
-    // e.g) Hoge::Fuga->bar();
-    static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)([a-z0-9_]+)(\(|;)/g;
+    // e.g) Hoge::Fuga::bar;
+    static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)::([a-z0-9_]+)(\(|;)/g;
 
     static readonly DELIMITER = /\s|\(/g;
 
