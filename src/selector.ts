@@ -16,9 +16,9 @@ export class Selector {
 
         if (fullText === '') { return []; }
 
-        const matches = fullText.matchAll(regex);
+        const matches = [...fullText.matchAll(regex)];
 
-        return [...matches].reduce((ranges: vscode.Range[], match) => {
+        return matches.reduce((ranges: vscode.Range[], match) => {
             const startIndex = match.index !== undefined ? match.index : 0;
             const endIndex = match.index !== undefined ? match.index + match[0].length : 0;
             const startPosition = this.context.editor.document.positionAt(startIndex);
@@ -55,12 +55,12 @@ export class Selector {
         // avoid matching `use` and `package` statements for sub module match
         const fullTextExcludePackageAndUse = fullText.replace(AutoUseRegex.PACKAGE, '').replace(AutoUseRegex.USE, '');
 
-        const methodModuleMatches = fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE);
-        const methodModules = [...methodModuleMatches].map(mmm => mmm[0].replace('->', ''));
+        const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
+        const methodModules = methodModuleMatches.map(mmm => mmm[0].replace('->', ''));
         const uniqueMethodModules = new Set(methodModules);
 
-        const subModuleMatches = fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE);
-        const subModules = [...subModuleMatches].map(smm => smm[1]);
+        const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
+        const subModules = subModuleMatches.map(smm => smm[1]);
         const uniqueSubModules = new Set(subModules);
 
         return [...uniqueMethodModules, ...uniqueSubModules].sort();
