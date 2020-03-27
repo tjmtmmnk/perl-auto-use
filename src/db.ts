@@ -14,7 +14,7 @@ export class DB {
         return this.imports;
     }
 
-    public static add(name: string, packageName: string, file: any, workspace: vscode.WorkspaceFolder | undefined): void {
+    public static add(name: string, packageName: string, file: vscode.Uri, workspace: vscode.WorkspaceFolder | undefined): void {
 
         name = name.trim();
 
