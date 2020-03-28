@@ -6,7 +6,9 @@ import * as vscode from 'vscode';
 import { DB, ImportObject } from '../../db';
 
 suite('Extension Test Suite', () => {
-	vscode.window.showInformationMessage('Start all tests.');
+	setup(() => {
+		DB.deleteAll();
+	});
 
 	const object: ImportObject = {
 		name: 'test',
@@ -15,8 +17,8 @@ suite('Extension Test Suite', () => {
 		workspace: undefined,
 	};
 
-	test('add', () => {
-		DB.add(object.name, object.packageName, object.file, object.workspace);
+	test('add', async () => {
+		await DB.add(object.name, object.packageName, object.file, object.workspace);
 
 		const objects = DB.all();
 		assert.strictEqual(objects.length, 1, 'get one');
@@ -24,8 +26,8 @@ suite('Extension Test Suite', () => {
 		assert.strictEqual(objects[0].packageName, object.packageName);
 	});
 
-	test('add already exist', () => {
-		DB.add(object.name, object.packageName, object.file, object.workspace);
+	test('add already exist', async () => {
+		await DB.add(object.name, object.packageName, object.file, object.workspace);
 
 		const objects = DB.all();
 		assert.strictEqual(objects.length, 1, 'do not add');

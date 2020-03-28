@@ -14,24 +14,33 @@ export class DB {
         return this.imports;
     }
 
-    public static add(name: string, packageName: string, file: vscode.Uri, workspace: vscode.WorkspaceFolder | undefined): void {
+    public static deleteAll(): ImportObject[] {
+        this.imports = [];
+        return this.imports;
+    }
 
-        name = name.trim();
+    public static add(name: string, packageName: string, file: vscode.Uri, workspace: vscode.WorkspaceFolder | undefined): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            name = name.trim();
 
-        if (name === '' || name.length === 1) { return; }
+            if (name === '' || name.length === 1) { reject('can not resolve name'); }
 
-        const obj: ImportObject = {
-            name,
-            packageName,
-            file,
-            workspace
-        };
+            const obj: ImportObject = {
+                name,
+                packageName,
+                file,
+                workspace
+            };
 
-        const exists = this.imports.findIndex(m => m.name === name && m.packageName === packageName && m.file.fsPath === file.fsPath);
+            const exist = this.imports.findIndex(m => m.name === name && m.packageName === packageName && m.file.fsPath === file.fsPath) !== -1;
 
-        if (exists === -1) {
-            this.imports.push(obj);
-        }
+            if (exist) {
+                reject('alredy exist');
+            } else {
+                this.imports.push(obj);
+                resolve('added');
+            }
+        });
     }
 
     public static findByName(name: string): ImportObject[] {
