@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "src/test/testWorkSpace"
+		}
+	],
+	"settings": {
+		"filesToScab": "./**/*.pm"
+	}
+}
