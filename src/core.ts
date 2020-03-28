@@ -7,16 +7,13 @@ import { Scanner } from './scanner';
 import { SelectUse } from './selectUse';
 
 export class Core {
-    private workspace: vscode.WorkspaceFolder | undefined;
-
-    constructor(private context: AutoUseContext) {
-        this.workspace = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0] : undefined;
-    }
+    constructor(private context: AutoUseContext) { }
 
     public attatchCommands(): void {
         const scanCommand = vscode.commands.registerCommand('extension.scanFiles', () => {
-            const scanner = new Scanner(this.context, vscode.workspace.getConfiguration('autouse'));
-            scanner.scan(this.workspace);
+            const scanner = new Scanner(this.context);
+
+            scanner.scan();
             vscode.window.showInformationMessage('Scan done!!');
         });
 
