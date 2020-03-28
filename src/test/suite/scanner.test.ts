@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-import { DB, ImportObject } from '../../db';
+import { DB } from '../../db';
 
 import { MockAutoUseContext } from '../src/mockAutoUseContext';
 import { Scanner } from '../../scanner';

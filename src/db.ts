@@ -15,7 +15,7 @@ export class DB {
     }
 
     public static deleteAll(): ImportObject[] {
-        this.imports = [];
+        this.imports.length = 0;
         return this.imports;
     }
 
