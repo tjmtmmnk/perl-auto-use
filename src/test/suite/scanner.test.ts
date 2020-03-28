@@ -14,6 +14,7 @@ suite('Extension Test Suite', () => {
     });
 
     test('rootPath', () => {
+        console.error(__dirname);
         assert.strictEqual(vscode.workspace.workspaceFolders!.length, 1);
         assert.strictEqual(vscode.workspace.rootPath!, join(__dirname, '../../../src/test/testWorkSpace'));
     });
