@@ -14,9 +14,8 @@ export class DB {
         return this.imports;
     }
 
-    public static deleteAll(): ImportObject[] {
-        this.imports.length = 0;
-        return this.imports;
+    public static deleteAll(): void {
+        this.imports.splice(0);
     }
 
     public static add(name: string, packageName: string, file: vscode.Uri, workspace: vscode.WorkspaceFolder | undefined): Promise<any> {
