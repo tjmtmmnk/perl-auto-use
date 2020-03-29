@@ -21,6 +21,11 @@ suite('Extension Test Suite', () => {
     test('scan', async () => {
         const scanner = new Scanner(MockAutoUseContext);
         await scanner.scan();
-        assert.strictEqual(DB.all().length, 6, 'get six');
+        assert.strictEqual(DB.all().length, 6, 'scanned six sub objects');
+
+        const subArgsObjects = DB.findByName('args');
+        assert.strictEqual(subArgsObjects.length, 1);
+        assert.strictEqual(subArgsObjects[0].name, 'args');
+        assert.strictEqual(subArgsObjects[0].packageName, 'Smart::Args::TypeTiny');
     });
 });
