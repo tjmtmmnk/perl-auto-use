@@ -1,4 +1,8 @@
-# perl-auto-use
+# perl-auto-use 
+<img src="https://image.flaticon.com/icons/svg/2152/2152482.svg" hight="180" width="180">
+
+Icon made by Good Ware from [here](https://www.flaticon.com/free-icon/automation_2152482?term=automation&page=1&position=93)
+
 ![](https://img.shields.io/github/workflow/status/tjmtmmnk/perl-auto-use/vscode-test)
 ![](https://img.shields.io/github/issues/tjmtmmnk/perl-auto-use)
 ![](https://img.shields.io/github/issues-pr/tjmtmmnk/perl-auto-use)
