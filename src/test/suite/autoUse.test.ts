@@ -36,6 +36,7 @@ suite('AutoUse Test', () => {
 
     test('insertModules', async () => {
         await autoUse.insertModules();
+
         const fullText = selector.getFullText();
         const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
         const okLibraryModule =
@@ -43,5 +44,20 @@ suite('AutoUse Test', () => {
             RegExp(/use Smart::Args::TypeTiny qw\(args_pos\)/);
 
         assert.ok(okFullyQualifiedModule && okLibraryModule);
+
+        test('module having sub already existed', async () => {
+            await selector.deleteByRegex(/use .+;\n|\r\n/g);
+            await selector.insertUseStatements(['use Smart::Args::TipeTiny qw(args)']);
+
+            await autoUse.insertModules();
+
+            const fullText = selector.getFullText();
+            const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
+            const okLibraryModule =
+                RegExp(/use Hoge::Piyo qw\(create_piyo piyo_piyo\)/).test(fullText) &&
+                RegExp(/use Smart::Args::TypeTiny qw\(args args_pos\)/);
+
+            assert.ok(okFullyQualifiedModule && okLibraryModule);
+        });
     });
 });
