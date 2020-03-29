@@ -7,12 +7,13 @@ import { join } from 'path';
 
 suite('Selector Test', () => {
     let selector: Selector;
+    let mockAutoUseContext: AutoUseContext;
 
     setup(async () => {
         const file = vscode.Uri.file(join(vscode.workspace.rootPath || '', 'Selector.pm'));
         const document = await vscode.workspace.openTextDocument(file);
         const editor = await vscode.window.showTextDocument(document);
-        const mockAutoUseContext = {
+        mockAutoUseContext = {
             extensionContext: '',
             editor: editor,
             workspace: vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0] : undefined,
@@ -57,5 +58,16 @@ suite('Selector Test', () => {
                 subList: ['args', 'args_pos']
             }
         ], 'get declared module having subs');
+    });
+
+    test('deleteByRegex', async () => {
+        await mockAutoUseContext.editor.edit(e => e.insert(new vscode.Position(0, 0), 'atodekesu'));
+        const fullText = selector.getFullText();
+        assert.ok(RegExp(/atodekesu/).test(fullText), 'inserted');
+
+        await selector.deleteByRegex(/atodekesu/g);
+
+        const updatedFullText = selector.getFullText();
+        assert.ok(!RegExp(/atodekesu/).test(updatedFullText), 'deleted');
     });
 });
