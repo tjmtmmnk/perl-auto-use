@@ -1,7 +1,7 @@
 # perl-auto-use 
-<img src="https://image.flaticon.com/icons/svg/2152/2152482.svg" hight="180" width="180">
+![automation](https://user-images.githubusercontent.com/31027514/77855649-aa544b80-722c-11ea-9de8-bfe20e23079a.png)
 
-Icon made by Good Ware from [here](https://www.flaticon.com/free-icon/automation_2152482?term=automation&page=1&position=93)
+<div>Icons made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
 ![](https://img.shields.io/github/workflow/status/tjmtmmnk/perl-auto-use/vscode-test)
 ![](https://img.shields.io/github/issues/tjmtmmnk/perl-auto-use)
