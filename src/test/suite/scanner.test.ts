@@ -1,16 +1,22 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
+import { AutoUseContext } from '../../autoUseContext';
 import { DB } from '../../db';
-
-import { MockAutoUseContext } from '../src/mockAutoUseContext';
 import { Scanner } from '../../scanner';
 import { join } from 'path';
 
-
-suite('Extension Test Suite', () => {
+suite('Scanner Test', () => {
+    let mockAutoUseContext: AutoUseContext;
+    
     setup(() => {
         DB.deleteAll();
+        mockAutoUseContext = {
+            extensionContext: '',
+            editor: vscode.window.activeTextEditor!,
+            workspace: undefined,
+            config: vscode.workspace.getConfiguration('autouse')
+        };
     });
 
     test('rootPath', () => {
@@ -19,7 +25,7 @@ suite('Extension Test Suite', () => {
     });
 
     test('scan', async () => {
-        const scanner = new Scanner(MockAutoUseContext);
+        const scanner = new Scanner(mockAutoUseContext);
         await scanner.scan();
         assert.strictEqual(DB.all().length, 6, 'scanned six sub objects');
 
