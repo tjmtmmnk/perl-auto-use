@@ -8,7 +8,7 @@ import { join } from 'path';
 
 suite('Scanner Test', () => {
     let mockAutoUseContext: AutoUseContext;
-    
+
     setup(() => {
         DB.deleteAll();
         mockAutoUseContext = {
@@ -27,11 +27,14 @@ suite('Scanner Test', () => {
     test('scan', async () => {
         const scanner = new Scanner(mockAutoUseContext);
         await scanner.scan();
-        assert.strictEqual(DB.all().length, 6, 'scanned six sub objects');
+        assert.notStrictEqual(DB.all().length, 0, 'get objects');
 
         const subArgsObjects = DB.findByName('args');
-        assert.strictEqual(subArgsObjects.length, 1);
-        assert.strictEqual(subArgsObjects[0].name, 'args');
-        assert.strictEqual(subArgsObjects[0].packageName, 'Smart::Args::TypeTiny');
+        assert.strictEqual(subArgsObjects.length, 2, 'duplicated');
+
+        const subArgsPosObjects = DB.findByName('args_pos');
+        assert.strictEqual(subArgsPosObjects.length, 1);
+        assert.strictEqual(subArgsPosObjects[0].name, 'args_pos');
+        assert.strictEqual(subArgsPosObjects[0].packageName, 'Smart::Args::TypeTiny');
     });
 });
