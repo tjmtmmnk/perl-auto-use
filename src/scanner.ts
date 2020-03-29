@@ -23,9 +23,9 @@ export class Scanner {
             const files = await vscode.workspace.findFiles(sl, null, 99999);
 
             await Promise.all(files.map(async file => {
-                const objects = await this.extractExportFunctions(file);
+                const objects: ImportObject[] = await this.extractExportFunctions(file).catch(e => Promise.reject(e));
                 await Promise.all(objects.map(async obj => {
-                    await DB.add(obj.name, obj.packageName, obj.file, obj.workspace);
+                    await DB.add(obj.name, obj.packageName, obj.file, obj.workspace).catch(e => Promise.reject(e));
                 }));
             }));
         }));
@@ -34,7 +34,7 @@ export class Scanner {
     }
 
     private async extractExportFunctions(file: vscode.Uri) {
-        return new Promise<ImportObject[]>((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             readFile(file.fsPath, 'utf-8', (err, data) => {
                 if (err) {
                     reject(err);
@@ -42,8 +42,8 @@ export class Scanner {
 
                 const packageNames = [...data.matchAll(AutoUseRegex.PACKAGE)];
 
-                if (packageNames === undefined) {
-                    reject("package name is not found");
+                if (packageNames.length === 0) {
+                    return reject(`package name is not found in ${file}`);
                 }
 
                 const packageName = packageNames[0][1];

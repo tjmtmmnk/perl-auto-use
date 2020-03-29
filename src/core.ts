@@ -10,10 +10,11 @@ export class Core {
     constructor(private context: AutoUseContext) { }
 
     public attatchCommands(): void {
-        const scanCommand = vscode.commands.registerCommand('extension.scanFiles', () => {
+        const scanCommand = vscode.commands.registerCommand('extension.scanFiles', async () => {
             const scanner = new Scanner(this.context);
 
-            scanner.scan();
+            await scanner.scan().catch(e => vscode.window.showWarningMessage(e));
+
             vscode.window.showInformationMessage('Scan done!!');
         });
 
