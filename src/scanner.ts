@@ -25,7 +25,7 @@ export class Scanner {
             await Promise.all(files.map(async file => {
                 const objects: ImportObject[] = await this.extractExportFunctions(file).catch(e => Promise.reject(e));
                 await Promise.all(objects.map(async obj => {
-                    await DB.add(obj.name, obj.packageName, obj.file, obj.workspace).catch(e => Promise.reject(e));
+                    await DB.add(obj.name, obj.packageName, obj.file, obj.workspace);
                 }));
             }));
         }));

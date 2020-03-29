@@ -13,7 +13,7 @@ export class Core {
         const scanCommand = vscode.commands.registerCommand('extension.scanFiles', async () => {
             const scanner = new Scanner(this.context);
 
-            await scanner.scan().catch(e => vscode.window.showWarningMessage(e));
+            await scanner.scan();
 
             vscode.window.showInformationMessage('Scan done!!');
         });
