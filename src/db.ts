@@ -18,11 +18,11 @@ export class DB {
         this.imports.splice(0);
     }
 
-    public static add(name: string, packageName: string, file: vscode.Uri, workspace: vscode.WorkspaceFolder | undefined): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
+    public static add(name: string, packageName: string, file: vscode.Uri, workspace: vscode.WorkspaceFolder | undefined): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
             name = name.trim();
 
-            if (name === '' || name.length === 1) { reject('can not resolve name'); }
+            if (name === '') { resolve(false); }
 
             const obj: ImportObject = {
                 name,
@@ -34,10 +34,10 @@ export class DB {
             const exist = this.imports.findIndex(m => m.name === name && m.packageName === packageName && m.file.fsPath === file.fsPath) !== -1;
 
             if (exist) {
-                reject('alredy exist');
+                resolve(false);
             } else {
                 this.imports.push(obj);
-                resolve('added');
+                resolve(true);
             }
         });
     }
