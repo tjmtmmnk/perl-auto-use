@@ -1,5 +1,8 @@
 # perl-auto-use
-![](https://github.com/tjmtmmnk/perl-auto-use/workflows/vscode-test/badge.svg)
+![](https://img.shields.io/github/workflow/status/tjmtmmnk/perl-auto-use/vscode-test)
+![](https://img.shields.io/github/issues/tjmtmmnk/perl-auto-use)
+![](https://img.shields.io/github/issues-pr/tjmtmmnk/perl-auto-use)
+![](https://img.shields.io/github/license/tjmtmmnk/perl-auto-use)
 
 vscode extention for perl auto use
 

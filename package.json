@@ -1,7 +1,8 @@
 {
-	"name": "auto-use",
-	"displayName": "",
-	"description": "",
+	"name": "perl-auto-use",
+	"displayName": "perl-auto-use",
+	"description": "scan perl modules and you can auto use.",
+	"publisher": "tjmtmmnk",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.42.0"
@@ -9,9 +10,16 @@
 	"categories": [
 		"Other"
 	],
+	"author": {
+		"name": "tjmtmmnk"
+	  },
+	"icon": "images/icon.png",
+	"galleryBanner": {
+		"color": "#5c2d91",
+		"theme": "dark"
+	},
 	"activationEvents": [
 		"onCommand:extension.scanFiles",
-		"onCommand:extension.showDB",
 		"onCommand:extension.autoUse"
 	],
 	"main": "./out/extension.js",
@@ -22,17 +30,13 @@
 				"title": "Scan perl module files"
 			},
 			{
-				"command": "extension.showDB",
-				"title": "Show DB"
-			},
-			{
 				"command": "extension.autoUse",
 				"title": "Auto use (exec after scanning)"
 			}
 		],
 		"configuration": {
 			"type": "object",
-			"title": "Auto Use configuration",
+			"title": "Perl Auto Use configuration",
 			"properties": {
 				"autouse.filesToScan": {
 					"type": "string",
@@ -62,5 +66,14 @@
 		"mocha": "^7.0.1",
 		"typescript": "^3.7.5",
 		"vscode-test": "^1.3.0"
-	}
+	},
+	"bugs": {
+		"url": "https://github.com/tjmtmmnk/perl-auto-use/issues",
+		"email": "tjmtmmnk@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tjmtmmnk/perl-auto-use"
+	},
+	"homepage": "https://github.com/tjmtmmnk/perl-auto-use/blob/master/README.md"
 }
