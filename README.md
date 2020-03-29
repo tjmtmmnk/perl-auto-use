@@ -1,4 +1,6 @@
-# auto-use
+# perl-auto-use
+![](https://github.com/tjmtmmnk/perl-auto-use/workflows/vscode-test/badge.svg)
+
 vscode extention for perl auto use
 
 ## Style
