@@ -12,7 +12,7 @@ suite('Selector Test', () => {
     setup(async () => {
         const file = vscode.Uri.file(join(vscode.workspace.rootPath || '', 'Selector.pm'));
         const document = await vscode.workspace.openTextDocument(file);
-        const editor = await vscode.window.showTextDocument(document);
+        const editor = await vscode.window.showTextDocument(document, undefined, false);
         mockAutoUseContext = {
             extensionContext: '',
             editor: editor,
