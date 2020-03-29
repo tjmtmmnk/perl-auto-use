@@ -1,9 +1,8 @@
 package Hoge::Bar;
-use strict;
-use warnings;
-use utf8;
 
-sub bar_func {
-    my $self = shift;
-    print 'bar';
+use Exporter 'import';
+our @EXPORT = qw/args/;
+
+sub args {
+    print 'exported and be duplicate';
 }
