@@ -32,6 +32,12 @@ suite('Scanner Test', () => {
         const subArgsObjects = DB.findByName('args');
         assert.strictEqual(subArgsObjects.length, 2, 'duplicated');
 
+        const subCreatePiyoObjects = DB.findByName('create_piyo');
+        assert.strictEqual(subCreatePiyoObjects.length, 1, 'get function exported by get_public_functions');
+
+        const subPrivateArgsPosObjects = DB.findByName('_args_pos');
+        assert.strictEqual(subPrivateArgsPosObjects.length, 0, 'get_public_functions do not export private function');
+
         const subArgsPosObjects = DB.findByName('args_pos');
         assert.strictEqual(subArgsPosObjects.length, 1);
         assert.strictEqual(subArgsPosObjects[0].name, 'args_pos');
