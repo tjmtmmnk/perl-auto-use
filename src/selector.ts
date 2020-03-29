@@ -95,7 +95,7 @@ export class Selector {
     public async deleteByRegex(regex: RegExp): Promise<boolean> {
         const ranges = this.getRangesByRegex(regex);
 
-        if (ranges === []) { return Promise.reject('not match'); }
+        if (ranges === []) { return Promise.reject(false); }
 
         return this.context.editor.edit(e => ranges.forEach(range => e.delete(range)));
     }
