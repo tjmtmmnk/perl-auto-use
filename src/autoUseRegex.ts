@@ -27,9 +27,9 @@ export class AutoUseRegex {
     // e.g) Hoge::Fuga::bar;
     static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)::([a-z0-9_]+)(\(|;)/g;
 
-    static readonly DELIMITER = /\s|\(|;/g;
+    static readonly DELIMITER = /\s|\(|;|,/g;
 
     static readonly EXACT_MATCH_WORD_LOWER_CASE = /^[a-z0-9_]+$/;
 
-    static readonly DECLARE = /use|my|our|local|sub|package/;
+    static readonly DECLARE = /^(use|my|our|local|sub|package)$/;
 }
