@@ -35,7 +35,8 @@ export class UseBuilder {
                     .filter(io => !alreadyDeclaredSubList.includes(io.name))
                     .map(fio => fio.name)
                     .concat(alreadyDeclaredSubList)
-                : packageNameToImportObjects[packageName].map(io => io.name);
+                    .sort()
+                : packageNameToImportObjects[packageName].map(io => io.name).sort();
 
             const useStatement = this.buildUseStatement(packageName, subList);
             if (alreadyDeclaredModuleSub?.length) {
