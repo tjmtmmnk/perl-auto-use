@@ -40,7 +40,7 @@ suite('AutoUse Test', () => {
         const fullText = selector.getFullText();
         const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
         const okLibraryModule =
-            RegExp(/use Hoge::Piyo qw\(create_piyo piyo_piyo\)/).test(fullText) &&
+            RegExp(/use Hoge::Piyo qw\(create_piyo my_name piyo_piyo\)/).test(fullText) &&
             RegExp(/use Smart::Args::TypeTiny qw\(args_pos\)/).test(fullText) &&
             !RegExp(/use Smart::Args::TypeTiny::Check/).test(fullText);
 
