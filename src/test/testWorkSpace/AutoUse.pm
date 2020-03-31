@@ -1,19 +1,26 @@
 package AutoUse;
 use Smart::Args::TypeTiny qw(args_pos);
-use Hoge::Piyo qw(create_piyo piyo_piyo);
+use Hoge::Piyo qw(create_piyo my_name piyo_piyo);
 use Hoge::Fuga;
 
+# check_type is not used
 sub new_from_name {
     args_pos my $class => 'Class',
              my $name  => 'Str',
     ;
-    create_piyo;
-    print('}
 
+    my $piyo = create_piyo;
+
+    my $hash = {
+        types => 'types is exported but hash key',
+    };
+}
+
+# check_rule is not used
 sub song {
     Hoge::Fuga->song;
-    piyo_piyo(times => 2);
-    print('
+    my $sing = piyo_piyo(times => 2);
+    my $name = my_name;
 }
 
 sub walk {

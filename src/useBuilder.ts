@@ -35,12 +35,13 @@ export class UseBuilder {
                     .filter(io => !alreadyDeclaredSubList.includes(io.name))
                     .map(fio => fio.name)
                     .concat(alreadyDeclaredSubList)
-                : packageNameToImportObjects[packageName].map(io => io.name);
+                    .sort()
+                : packageNameToImportObjects[packageName].map(io => io.name).sort();
 
             const useStatement = this.buildUseStatement(packageName, subList);
             if (alreadyDeclaredModuleSub?.length) {
-                const regex = `use ${packageName} qw(\\/|\\()(\\s*\\w+\\s*)*(\\/|\\));\n|\r\n|\r`;
-                await this.selector.deleteByRegex(RegExp(regex));
+                const regex = `use ${packageName} qw\(.*\);(\n|\r\n)`;
+                await this.selector.deleteByRegex(RegExp(regex, 'g'));
             }
             if (useStatement !== '') {
                 useStatements.push(useStatement);
