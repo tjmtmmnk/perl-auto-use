@@ -29,15 +29,25 @@ suite('AutoUse Test', () => {
         await scanner.scan();
 
         selector = new Selector(mockAutoUseContext);
-        await selector.deleteByRegex(/use .+;\n|\r\n/g);
 
         autoUse = new AutoUse(mockAutoUseContext);
     });
 
     test('insertModules', async () => {
+        await selector.deleteByRegex(/use .+;\n|\r\n/g);
+
+        await selector.insertUseStatements(['use strict;', 'use warnings;']);
+
         await autoUse.insertModules();
 
         const fullText = selector.getFullText();
+
+        const insertAfterPackage = RegExp(/package AutoUse;\nuse strict;/).test(fullText);
+        const useStatementsOrder = RegExp(/use warnings;\nuse Hoge::Fuga;/).test(fullText);
+
+        assert.ok(insertAfterPackage, 'inserted after package statement when no use statement');
+        assert.ok(useStatementsOrder, 'inserted after last use statement');
+
         const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
         const okLibraryModule =
             RegExp(/use Hoge::Piyo qw\(create_piyo my_name piyo_piyo\)/).test(fullText) &&
@@ -47,8 +57,8 @@ suite('AutoUse Test', () => {
         assert.ok(okFullyQualifiedModule && okLibraryModule, 'success use and checked not used hash key and comment');
 
         test('module having sub already existed', async () => {
-            await selector.deleteByRegex(/use .+;\n|\r\n/g);
-            await selector.insertUseStatements(['use Smart::Args::TipeTiny qw(args)']);
+            await selector.deleteByRegex(/use []+;\n|\r\n/g);
+            await selector.insertUseStatements(['use Smart::Args::TipeTiny qw(args);']);
 
             await autoUse.insertModules();
 
