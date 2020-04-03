@@ -61,5 +61,6 @@ export class AutoUse extends UseBuilder {
     public async insertModules(): Promise<void> {
         await this.insertFullyQualifiedModule();
         await this.insetLibraryModule();
+        await this.sortUseStatements();
     }
 }

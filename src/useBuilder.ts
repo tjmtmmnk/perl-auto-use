@@ -1,6 +1,6 @@
-import { ImportObject } from './db';
-
 import { AutoUseContext } from './autoUseContext';
+import { AutoUseRegex } from './autoUseRegex';
+import { ImportObject } from './db';
 import { Selector } from './selector';
 
 export class UseBuilder {
@@ -40,6 +40,7 @@ export class UseBuilder {
 
             const useStatement = this.buildUseStatement(packageName, subList);
             if (alreadyDeclaredModuleSub?.length) {
+                // to remove new line
                 const regex = `use ${packageName} qw\(.*\);(\n|\r\n)`;
                 await this.selector.deleteByRegex(RegExp(regex, 'g'));
             }
@@ -48,6 +49,17 @@ export class UseBuilder {
             }
         }
         return this.selector.insertUseStatements(useStatements);
+    }
+
+    protected async sortUseStatements() {
+        const useStatements = this.selector.getAllUseStatements();
+        const sortedUseStatements = useStatements.sort();
+
+        // to remove new line
+        const regex = `use ([A-Z][a-z0-9]*(::)?)+.*;(\n|\r\n)`;
+        await this.selector.deleteByRegex(RegExp(regex, 'g'));
+
+        await this.selector.insertUseStatements(sortedUseStatements);
     }
 
     private partitionByPackageName(objects: ImportObject[]) {

@@ -41,7 +41,7 @@ export class Selector {
     public async insertUseStatements(useStatements: string[]): Promise<boolean> {
         const useRanges = this.getRangesByRegex(AutoUseRegex.USE);
         const packageRanges = this.getRangesByRegex(AutoUseRegex.PACKAGE);
-    
+
         // insert use statement next line of last use statement
         const insertPosition = useRanges.length > 0
             ? new vscode.Position(useRanges[useRanges.length - 1].end.line + 1, 0)
@@ -93,6 +93,11 @@ export class Selector {
 
             return obj;
         });
+    }
+
+    public getAllUseStatements(): string[] {
+        const fullText = this.getFullText();
+        return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[0]);
     }
 
     public async deleteByRegex(regex: RegExp): Promise<boolean> {

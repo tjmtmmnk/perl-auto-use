@@ -21,6 +21,8 @@ export class AutoUseRegex {
     // e.g) use Hoge::Fuga qw(bar);
     static readonly USE_SUB = /use ([A-Za-z0-9:]+) qw(\/|\()((\w+|\s)*)(\/|\));/g;
 
+    static readonly USE_AND_SUB = /use ([A-Z][a-z0-9]*(::)?)+[\w\s\(\)]*;/g;
+
     // e.g) Hoge::Fuga->bar;
     static readonly METHOD_MODULE = /([A-Z][a-z0-9]*(::)?)+->/g;
 
