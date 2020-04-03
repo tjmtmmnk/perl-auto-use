@@ -1,5 +1,4 @@
 import { AutoUseContext } from './autoUseContext';
-import { AutoUseRegex } from './autoUseRegex';
 import { ImportObject } from './db';
 import { Selector } from './selector';
 
@@ -53,13 +52,13 @@ export class UseBuilder {
 
     protected async sortUseStatements() {
         const useStatements = this.selector.getAllUseStatements();
-        const sortedUseStatements = useStatements.sort();
+        const ascUseStatements = useStatements.sort();
 
         // to remove new line
         const regex = `use ([A-Z][a-z0-9]*(::)?)+.*;(\n|\r\n)`;
         await this.selector.deleteByRegex(RegExp(regex, 'g'));
 
-        await this.selector.insertUseStatements(sortedUseStatements);
+        await this.selector.insertUseStatements(ascUseStatements);
     }
 
     private partitionByPackageName(objects: ImportObject[]) {
