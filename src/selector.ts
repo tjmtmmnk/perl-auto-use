@@ -39,14 +39,17 @@ export class Selector {
     }
 
     public async insertUseStatements(useStatements: string[]): Promise<boolean> {
-        const ranges = this.getRangesByRegex(AutoUseRegex.PACKAGE);
+        const useRanges = this.getRangesByRegex(AutoUseRegex.USE);
+        const packageRanges = this.getRangesByRegex(AutoUseRegex.PACKAGE);
+    
+        // insert use statement next line of last use statement
+        const insertPosition = useRanges.length > 0
+            ? new vscode.Position(useRanges[useRanges.length - 1].end.line + 1, 0)
+            : packageRanges.length > 0
+                ? new vscode.Position(packageRanges[0].end.line + 1, 0)
+                : new vscode.Position(0, 0);
 
-        // insert use statement next line of 'package' if package name is defined, otherwise first line
-        const endPosition = ranges.length > 0
-            ? new vscode.Position(ranges[0].end.line + 1, 0)
-            : new vscode.Position(0, 0);
-
-        return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(endPosition, useStatement + "\n")));
+        return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(insertPosition, useStatement + "\n")));
     }
 
     public getFullyQualifiedModules(): string[] | undefined {
