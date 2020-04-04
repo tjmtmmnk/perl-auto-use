@@ -43,10 +43,14 @@ suite('AutoUse Test', () => {
         const fullText = selector.getFullText();
 
         const insertAfterPackage = RegExp(/package AutoUse;\nuse strict;/).test(fullText);
-        const useStatementsOrder = RegExp(/use warnings;\nuse Hoge::Fuga;/).test(fullText);
+        const insertAfterUse = RegExp(/use warnings;\nuse Hoge::Fuga;/).test(fullText);
+        const useStatementsOrder =
+            RegExp(/use Hoge::Fuga;\nuse Hoge::Piyo/).test(fullText) &&
+            RegExp(/use Hoge::Piyo[\s\w\(\)]+;\nuse Smart::Args::TypeTiny/).test(fullText);
 
         assert.ok(insertAfterPackage, 'inserted after package statement when no use statement');
-        assert.ok(useStatementsOrder, 'inserted after last use statement');
+        assert.ok(insertAfterUse, 'inserted after last use statement');
+        assert.ok(useStatementsOrder, 'sorted use statements asc');
 
         const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
         const okLibraryModule =
@@ -57,7 +61,7 @@ suite('AutoUse Test', () => {
         assert.ok(okFullyQualifiedModule && okLibraryModule, 'success use and checked not used hash key and comment');
 
         test('module having sub already existed', async () => {
-            await selector.deleteByRegex(/use []+;\n|\r\n/g);
+            await selector.deleteByRegex(/use .+;\n|\r\n/g);
             await selector.insertUseStatements(['use Smart::Args::TipeTiny qw(args);']);
 
             await autoUse.insertModules();

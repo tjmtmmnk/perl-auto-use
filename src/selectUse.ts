@@ -15,8 +15,9 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
     constructor(context: AutoUseContext) {
         super(context);
 
-        const insertSelectUseCommand = vscode.commands.registerCommand(COMMAND_INSERT_SELECT_USE, (importObjects: ImportObject[]) => {
-            this.insertUseStatementByImportObjects(importObjects);
+        const insertSelectUseCommand = vscode.commands.registerCommand(COMMAND_INSERT_SELECT_USE, async (importObjects: ImportObject[]) => {
+            await this.insertUseStatementByImportObjects(importObjects);
+            await this.sortUseStatements();
         });
 
         context.extensionContext.subscriptions.push(insertSelectUseCommand);

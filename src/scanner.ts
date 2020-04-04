@@ -53,8 +53,8 @@ export class Scanner {
                 const exportPublicSubMatches = [...data.matchAll(AutoUseRegex.GET_PUBLIC_FUNCTIONS)];
 
                 let importObjects: ImportObject[] = [];
-                if (exportMatches.length > 0) {
-                    const subs: string[] = exportMatches[0][3].split(/\s/);
+
+                const pushSubs = (importObjects: ImportObject[], subs: string[]) => {
                     subs.forEach(sub => {
                         const object: ImportObject = {
                             name: sub,
@@ -64,33 +64,22 @@ export class Scanner {
                         };
                         importObjects.push(object);
                     });
+                };
+
+                if (exportMatches.length > 0) {
+                    const subs: string[] = exportMatches[0][3].split(/\s/);
+                    pushSubs(importObjects, subs);
                 }
 
                 if (exportOKMatches.length > 0) {
                     const subs: string[] = exportOKMatches[0][3].split(/\s/);
-                    subs.forEach(sub => {
-                        const object: ImportObject = {
-                            name: sub,
-                            packageName: packageName,
-                            file: file,
-                            workspace: this.context.workspace
-                        };
-                        importObjects.push(object);
-                    });
+                    pushSubs(importObjects, subs);
                 }
 
                 if (exportPublicSubMatches.length > 0) {
                     const subMatches = [...data.matchAll(AutoUseRegex.SUB_DECLARE)];
                     const subs: string[] = subMatches.map(sm => sm[1]);
-                    subs.forEach(sub => {
-                        const object: ImportObject = {
-                            name: sub,
-                            packageName: packageName,
-                            file: file,
-                            workspace: this.context.workspace
-                        };
-                        importObjects.push(object);
-                    });
+                    pushSubs(importObjects, subs);
                 }
 
                 resolve(importObjects);
