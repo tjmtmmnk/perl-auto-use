@@ -16,7 +16,9 @@ export class Scanner {
         const scanLocations: vscode.GlobPattern[] = this.filesToScan
             .split(' ')
             .map(fts =>
-                this.context.workspace === undefined ? fts : new vscode.RelativePattern(this.context.workspace, fts)
+                this.context.workspace === undefined
+                    ? fts
+                    : new vscode.RelativePattern(this.context.workspace, fts)
             );
 
         await Promise.all(scanLocations.map(async sl => {

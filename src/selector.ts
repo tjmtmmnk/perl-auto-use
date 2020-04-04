@@ -52,7 +52,7 @@ export class Selector {
         return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(insertPosition, useStatement + "\n")));
     }
 
-    public getFullyQualifiedModules(): string[] | undefined {
+    public getFullyQualifiedModules(): string[] {
         const fullText = this.getFullText();
 
         // avoid matching `use` and `package` statements for sub module match
@@ -60,26 +60,24 @@ export class Selector {
 
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
         const methodModules = methodModuleMatches.map(mmm => mmm[0].replace('->', ''));
-        const uniqueMethodModules = [... new Set(methodModules)];
 
         const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
         const subModules = subModuleMatches.map(smm => smm[1]);
-        const uniqueSubModules = [... new Set(subModules)];
 
-        return [... new Set(uniqueMethodModules.concat(uniqueSubModules))].sort();
+        return [... new Set(methodModules.concat(subModules))].sort();
     }
 
-    public getDeclaredModule(): string[] | undefined {
+    public getDeclaredModule(): string[] {
         const fullText = this.getFullText();
         const useMatches = [...fullText.matchAll(AutoUseRegex.USE)];
-        return useMatches?.map(um => um[1]);
+        return useMatches.map(um => um[1]);
     }
 
-    public getDeclaredModuleSub(): ModuleSubObject[] | undefined {
+    public getDeclaredModuleSub(): ModuleSubObject[] {
         const fullText = this.getFullText();
         const useSubMatches = [...fullText.matchAll(AutoUseRegex.USE_SUB)];
 
-        return useSubMatches?.map(usm => {
+        return useSubMatches.map(usm => {
             const packageName = usm[1];
 
             const subList = usm[3]

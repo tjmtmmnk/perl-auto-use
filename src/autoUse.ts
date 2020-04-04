@@ -11,9 +11,9 @@ export class AutoUse extends UseBuilder {
 
         const notDeclaredModule = declaredUse === undefined
             ? fullyQualifiedModules
-            : fullyQualifiedModules?.filter(fqm => !declaredUse?.includes(fqm));
+            : fullyQualifiedModules.filter(fqm => !declaredUse.includes(fqm));
 
-        const useStatements = notDeclaredModule?.map(us => this.buildUseStatement(us, undefined));
+        const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
 
         if (useStatements === undefined) { return Promise.reject('some error'); }
 
@@ -39,7 +39,7 @@ export class AutoUse extends UseBuilder {
             .map(ut => DB.findByName(ut));
 
         const declaredModuleSub = this.selector.getDeclaredModuleSub();
-        const alreadyDeclaredSubList = declaredModuleSub?.flatMap(dms => dms.subList);
+        const alreadyDeclaredSubList = declaredModuleSub.flatMap(dms => dms.subList);
 
         const notDuplicateImportObjects = importObjects
             .filter(objects => objects.length === 1)
@@ -50,7 +50,7 @@ export class AutoUse extends UseBuilder {
             .flat(1);
 
         duplicateImportObjects.forEach(dio => {
-            if (!alreadyDeclaredSubList?.includes(dio.name)) {
+            if (!alreadyDeclaredSubList.includes(dio.name)) {
                 vscode.window.showWarningMessage(`${dio.name} is duplicated. Please solve individually`);
             }
         });

@@ -31,6 +31,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
         }
 
         const selectText = document.getText(selection);
+        if (selectText === '') { return; }
         const importObjects = DB.findByName(selectText);
         if (!this.canHandle(importObjects)) { return; }
         return this.actionHandler(importObjects);
@@ -52,7 +53,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
 
         const declaredModuleSub = this.selector.getDeclaredModuleSub();
 
-        if (declaredModuleSub === undefined) { return true; }
+        if (declaredModuleSub.length === 0) { return true; }
 
         const subName = importObjects[0].name;
 
