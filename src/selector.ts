@@ -60,13 +60,11 @@ export class Selector {
 
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
         const methodModules = methodModuleMatches.map(mmm => mmm[0].replace('->', ''));
-        const uniqueMethodModules = [... new Set(methodModules)];
 
         const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
         const subModules = subModuleMatches.map(smm => smm[1]);
-        const uniqueSubModules = [... new Set(subModules)];
 
-        return [... new Set(uniqueMethodModules.concat(uniqueSubModules))].sort();
+        return [... new Set(methodModules.concat(subModules))].sort();
     }
 
     public getDeclaredModule(): string[] {
