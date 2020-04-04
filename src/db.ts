@@ -31,7 +31,11 @@ export class DB {
                 workspace
             };
 
-            const exist = this.imports.findIndex(m => m.name === name && m.packageName === packageName && m.file.fsPath === file.fsPath) !== -1;
+            const exist = this.imports.findIndex(m =>
+                m.name === name &&
+                m.packageName === packageName &&
+                m.file.fsPath === file.fsPath
+            ) !== -1;
 
             if (exist) {
                 resolve(false);

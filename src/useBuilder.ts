@@ -38,8 +38,10 @@ export class UseBuilder {
                     .filter(io => !alreadyDeclaredSubList.includes(io.name))
                     .map(fio => fio.name)
                     .concat(alreadyDeclaredSubList)
-                    .sort()
-                : packageNameToImportObjects[packageName].map(io => io.name).sort();
+                : packageNameToImportObjects[packageName]
+                    .map(io => io.name);
+
+            const useStatement = this.buildUseStatement(packageName, subList.sort());
 
             if (alreadyDeclaredModuleSub.length > 0) {
                 // to remove new line
