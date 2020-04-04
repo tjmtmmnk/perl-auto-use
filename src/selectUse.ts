@@ -52,7 +52,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
 
         const declaredModuleSub = this.selector.getDeclaredModuleSub();
 
-        if (declaredModuleSub === undefined) { return true; }
+        if (declaredModuleSub.length === 0) { return true; }
 
         const subName = importObjects[0].name;
 

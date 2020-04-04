@@ -26,8 +26,12 @@ export class UseBuilder {
         const declaredModuleSub = this.selector.getDeclaredModuleSub();
 
         for (const packageName of Object.keys(packageNameToImportObjects)) {
-            const alreadyDeclaredModuleSub = declaredModuleSub?.filter(dus => dus.packageName === packageName);
-            const alreadyDeclaredSubList = alreadyDeclaredModuleSub?.length ? alreadyDeclaredModuleSub[0].subList : [];
+            const alreadyDeclaredModuleSub = declaredModuleSub.filter(dus => dus.packageName === packageName);
+
+            const alreadyDeclaredSubList = alreadyDeclaredModuleSub.length > 0
+                ? alreadyDeclaredModuleSub[0].subList
+                : [];
+
             // filter not in alreadyDeclaredSubList beacause of not thinking wheter already declared sublist or not
             const subList: string[] = alreadyDeclaredSubList.length > 0
                 ? packageNameToImportObjects[packageName]
@@ -37,8 +41,7 @@ export class UseBuilder {
                     .sort()
                 : packageNameToImportObjects[packageName].map(io => io.name).sort();
 
-            const useStatement = this.buildUseStatement(packageName, subList);
-            if (alreadyDeclaredModuleSub?.length) {
+            if (alreadyDeclaredModuleSub.length > 0) {
                 // to remove new line
                 const regex = `use ${packageName} qw\(.*\);(\n|\r\n)`;
                 await this.selector.deleteByRegex(RegExp(regex, 'g'));

@@ -32,7 +32,7 @@ suite('Selector Test', () => {
     });
 
     test('getDeclaredModule', () => {
-        const declaredModule = selector.getDeclaredModule()?.sort();
+        const declaredModule = selector.getDeclaredModule().sort();
         assert.deepStrictEqual(declaredModule, [
             'Nanimonai',
             'Nothing',
@@ -43,7 +43,7 @@ suite('Selector Test', () => {
     });
 
     test('getDeclaredModuleSub', () => {
-        const declaredModuleSub = selector.getDeclaredModuleSub()?.sort((a, b) => a.packageName > b.packageName ? 1 : -1);
+        const declaredModuleSub = selector.getDeclaredModuleSub().sort((a, b) => a.packageName > b.packageName ? 1 : -1);
         assert.deepStrictEqual(declaredModuleSub, [
             {
                 packageName: 'Empty',

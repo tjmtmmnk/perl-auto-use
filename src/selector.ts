@@ -52,7 +52,7 @@ export class Selector {
         return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(insertPosition, useStatement + "\n")));
     }
 
-    public getFullyQualifiedModules(): string[] | undefined {
+    public getFullyQualifiedModules(): string[] {
         const fullText = this.getFullText();
 
         // avoid matching `use` and `package` statements for sub module match
@@ -69,17 +69,17 @@ export class Selector {
         return [... new Set(uniqueMethodModules.concat(uniqueSubModules))].sort();
     }
 
-    public getDeclaredModule(): string[] | undefined {
+    public getDeclaredModule(): string[] {
         const fullText = this.getFullText();
         const useMatches = [...fullText.matchAll(AutoUseRegex.USE)];
-        return useMatches?.map(um => um[1]);
+        return useMatches.map(um => um[1]);
     }
 
-    public getDeclaredModuleSub(): ModuleSubObject[] | undefined {
+    public getDeclaredModuleSub(): ModuleSubObject[] {
         const fullText = this.getFullText();
         const useSubMatches = [...fullText.matchAll(AutoUseRegex.USE_SUB)];
 
-        return useSubMatches?.map(usm => {
+        return useSubMatches.map(usm => {
             const packageName = usm[1];
 
             const subList = usm[3]
