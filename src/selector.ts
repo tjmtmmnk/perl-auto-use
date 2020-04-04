@@ -98,6 +98,10 @@ export class Selector {
         return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[0]);
     }
 
+    public deleteAllUseStatements(): Promise<boolean> {
+        return this.deleteByRegex(/use ([A-Z][a-z0-9]*(::)?)+.*;(\n|\r\n)/g);
+    }
+
     public async deleteByRegex(regex: RegExp): Promise<boolean> {
         const ranges = this.getRangesByRegex(regex);
 

@@ -9,18 +9,16 @@ export class AutoUse extends UseBuilder {
         const declaredUse = this.selector.getDeclaredModule();
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
 
-        const notDeclaredModule = declaredUse === undefined
+        const notDeclaredModule = declaredUse.length > 0
             ? fullyQualifiedModules
             : fullyQualifiedModules.filter(fqm => !declaredUse.includes(fqm));
 
         const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
 
-        if (useStatements === undefined) { return Promise.reject('some error'); }
-
         return this.selector.insertUseStatements(useStatements);
     }
 
-    private async insetLibraryModule(): Promise<boolean> {
+    private async insertLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
         const tokensInFullText = fullText
@@ -59,8 +57,9 @@ export class AutoUse extends UseBuilder {
     }
 
     public async insertModules(): Promise<void> {
+        await this.selector.deleteAllUseStatements();
         await this.insertFullyQualifiedModule();
-        await this.insetLibraryModule();
+        await this.insertLibraryModule();
         await this.sortUseStatements();
     }
 }
