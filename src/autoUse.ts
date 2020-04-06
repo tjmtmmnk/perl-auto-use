@@ -15,10 +15,12 @@ export class AutoUse extends UseBuilder {
 
         const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
 
+        if (useStatements === undefined) { return Promise.reject('some error'); }
+
         return this.selector.insertUseStatements(useStatements);
     }
 
-    private async insertLibraryModule(): Promise<boolean> {
+    private async insetLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
         const tokensInFullText = fullText
@@ -57,9 +59,8 @@ export class AutoUse extends UseBuilder {
     }
 
     public async insertModules(): Promise<void> {
-        await this.selector.deleteAllUseStatements();
         await this.insertFullyQualifiedModule();
-        await this.insertLibraryModule();
+        await this.insetLibraryModule();
         await this.sortUseStatements();
     }
 }

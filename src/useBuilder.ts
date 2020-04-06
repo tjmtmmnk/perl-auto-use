@@ -59,7 +59,8 @@ export class UseBuilder {
         const useStatements = this.selector.getAllModules();
         const ascUseStatements = useStatements.sort();
 
-        await this.selector.deleteAllUseStatements();
+        // to remove new line
+        await this.selector.deleteByRegex(/use ([A-Z][a-z0-9]*(::)?)+.*;(\n|\r\n)/g);
 
         await this.selector.insertUseStatements(ascUseStatements);
     }
