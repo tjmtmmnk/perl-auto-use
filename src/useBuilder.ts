@@ -19,11 +19,11 @@ export class UseBuilder {
         return 'use ' + packageName + ' qw(' + subListStr + ');';
     }
 
-    protected async insertUseStatementByImportObjects(importObjects: ImportObject[]): Promise<boolean> {
+    protected async insertUseSubByImportObjects(importObjects: ImportObject[]): Promise<boolean> {
         const packageNameToImportObjects = this.partitionByPackageName(importObjects);
 
         let useStatements: string[] = [];
-        const declaredModuleSub = this.selector.getDeclaredModuleSub();
+        const declaredModuleSub = this.selector.getModuleSubs();
 
         for (const packageName of Object.keys(packageNameToImportObjects)) {
             const alreadyDeclaredModuleSub = declaredModuleSub.filter(dus => dus.packageName === packageName);
@@ -56,7 +56,7 @@ export class UseBuilder {
     }
 
     protected async sortUseStatements() {
-        const useStatements = this.selector.getAllUseStatements();
+        const useStatements = this.selector.getAllModules();
         const ascUseStatements = useStatements.sort();
 
         await this.selector.deleteAllUseStatements();

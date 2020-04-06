@@ -6,12 +6,12 @@ import { UseBuilder } from './useBuilder';
 
 export class AutoUse extends UseBuilder {
     private async insertFullyQualifiedModule(): Promise<boolean> {
-        const declaredUse = this.selector.getDeclaredModule();
+        const declaredModules = this.selector.getAllModules();
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
 
-        const notDeclaredModule = declaredUse.length > 0
+        const notDeclaredModule = declaredModules.length > 0
             ? fullyQualifiedModules
-            : fullyQualifiedModules.filter(fqm => !declaredUse.includes(fqm));
+            : fullyQualifiedModules.filter(fqm => !declaredModules.includes(fqm));
 
         const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
 
@@ -36,7 +36,7 @@ export class AutoUse extends UseBuilder {
         const importObjects = [...uniqueTokensInFullText]
             .map(ut => DB.findByName(ut));
 
-        const declaredModuleSub = this.selector.getDeclaredModuleSub();
+        const declaredModuleSub = this.selector.getModuleSubs();
         const alreadyDeclaredSubList = declaredModuleSub.flatMap(dms => dms.subList);
 
         const notDuplicateImportObjects = importObjects
@@ -53,7 +53,7 @@ export class AutoUse extends UseBuilder {
             }
         });
 
-        return this.insertUseStatementByImportObjects(notDuplicateImportObjects);
+        return this.insertUseSubByImportObjects(notDuplicateImportObjects);
     }
 
     public async insertModules(): Promise<void> {

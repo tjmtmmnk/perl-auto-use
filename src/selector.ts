@@ -67,13 +67,13 @@ export class Selector {
         return [... new Set(methodModules.concat(subModules))].sort();
     }
 
-    public getDeclaredModule(): string[] {
+    public getModules(): string[] {
         const fullText = this.getFullText();
         const useMatches = [...fullText.matchAll(AutoUseRegex.USE)];
         return useMatches.map(um => um[1]);
     }
 
-    public getDeclaredModuleSub(): ModuleSubObject[] {
+    public getModuleSubs(): ModuleSubObject[] {
         const fullText = this.getFullText();
         const useSubMatches = [...fullText.matchAll(AutoUseRegex.USE_SUB)];
 
@@ -93,7 +93,7 @@ export class Selector {
         });
     }
 
-    public getAllUseStatements(): string[] {
+    public getAllModules(): string[] {
         const fullText = this.getFullText();
         return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[0]);
     }
