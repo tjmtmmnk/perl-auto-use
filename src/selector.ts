@@ -59,7 +59,7 @@ export class Selector {
         const fullTextExcludePackageAndUse = fullText.replace(AutoUseRegex.PACKAGE, '').replace(AutoUseRegex.USE, '');
 
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
-        const methodModules = methodModuleMatches.map(mmm => mmm[0].replace('->', ''));
+        const methodModules = methodModuleMatches.map(mmm => mmm[1]);
 
         const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
         const subModules = subModuleMatches.map(smm => smm[1]);

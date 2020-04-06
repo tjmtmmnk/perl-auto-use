@@ -47,10 +47,12 @@ suite('AutoUse Test', () => {
         const useStatementsOrder =
             RegExp(/use Hoge::Fuga;\nuse Hoge::Piyo/).test(fullText) &&
             RegExp(/use Hoge::Piyo[\s\w\(\)]+;\nuse Smart::Args::TypeTiny/).test(fullText);
+        const suffixReference = RegExp(/use HOGE;/).test(fullText);
 
         assert.ok(insertAfterPackage, 'inserted after package statement when no use statement');
         assert.ok(insertAfterUse, 'inserted after last use statement');
         assert.ok(useStatementsOrder, 'sorted use statements asc');
+        assert.ok(!suffixReference, 'suffix reference is not used');
 
         const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
         const okLibraryModule =

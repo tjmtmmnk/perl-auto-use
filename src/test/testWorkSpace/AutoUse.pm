@@ -16,6 +16,10 @@ sub new_from_name {
     my $hash = {
         types => 'types is exported but hash key',
     };
+
+    for(HOGE->@*) {
+        print $_;
+    }
 }
 
 # check_rule is not used
