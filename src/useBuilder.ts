@@ -23,7 +23,7 @@ export class UseBuilder {
         const packageNameToImportObjects = this.partitionByPackageName(importObjects);
 
         let useStatements: string[] = [];
-        const declaredModuleSub = this.selector.getModuleSubs();
+        const declaredModuleSub = this.selector.getUseModuleSubs();
 
         for (const packageName of Object.keys(packageNameToImportObjects)) {
             const alreadyDeclaredModuleSub = declaredModuleSub.filter(dus => dus.packageName === packageName);
@@ -56,7 +56,7 @@ export class UseBuilder {
     }
 
     protected async sortUseStatements() {
-        const useStatements = this.selector.getAllModules();
+        const useStatements = this.selector.getAllUseStatements();
         const ascUseStatements = useStatements.sort();
 
         // to remove new line

@@ -51,7 +51,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
     private canHandle(importObjects: ImportObject[]): boolean {
         if (importObjects.length <= 1) { return false; }
 
-        const declaredModuleSub = this.selector.getModuleSubs();
+        const declaredModuleSub = this.selector.getUseModuleSubs();
 
         if (declaredModuleSub.length === 0) { return true; }
 
