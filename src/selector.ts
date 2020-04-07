@@ -93,6 +93,11 @@ export class Selector {
         });
     }
 
+    public getAllModules(): string[] {
+        const fullText = this.getFullText();
+        return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[1]);
+    }
+
     public getAllUseStatements(): string[] {
         const fullText = this.getFullText();
         return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[0]);

@@ -7,11 +7,10 @@ import { UseBuilder } from './useBuilder';
 export class AutoUse extends UseBuilder {
     private async insertFullyQualifiedModule(): Promise<boolean> {
         const declaredModules = this.selector.getAllModules();
+
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
 
-        const notDeclaredModule = declaredModules.length > 0
-            ? fullyQualifiedModules
-            : fullyQualifiedModules.filter(fqm => !declaredModules.includes(fqm));
+        const notDeclaredModule = fullyQualifiedModules.filter(fqm => !declaredModules.includes(fqm));
 
         const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
 
@@ -20,7 +19,7 @@ export class AutoUse extends UseBuilder {
         return this.selector.insertUseStatements(useStatements);
     }
 
-    private async insetLibraryModule(): Promise<boolean> {
+    private async insertLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
         const tokensInFullText = fullText
@@ -38,8 +37,16 @@ export class AutoUse extends UseBuilder {
         const importObjects = [...uniqueTokensInFullText]
             .map(ut => DB.findByName(ut));
 
-        const declaredModuleSub = this.selector.getModuleSubs();
-        const alreadyDeclaredSubList = declaredModuleSub.flatMap(dms => dms.subList);
+        const declaredModules = this.selector.getUseModules();
+        const alreadyDeclaredSubList = this.selector.getUseModuleSubs().flatMap(ums => ums.subList);
+
+        await Promise.all(declaredModules.map(async dm => {
+            const includedInImportObject = importObjects.flat(1).map(io => io.packageName).includes(dm);
+            if (includedInImportObject) {
+                return this.selector.deleteByRegex(RegExp(`use ${dm};(\n|\r\n)`));
+            }
+            return Promise.resolve(false);
+        }));
 
         const notDuplicateImportObjects = importObjects
             .filter(objects => objects.length === 1)
@@ -60,7 +67,7 @@ export class AutoUse extends UseBuilder {
 
     public async insertModules(): Promise<void> {
         await this.insertFullyQualifiedModule();
-        await this.insetLibraryModule();
+        await this.insertLibraryModule();
         await this.sortUseStatements();
     }
 }
