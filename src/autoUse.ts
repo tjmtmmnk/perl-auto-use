@@ -23,10 +23,11 @@ export class AutoUse extends UseBuilder {
     private async insertLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
+        const removePattern = AutoUseRegex.COMMENT.source + '|' + AutoUseRegex.SUB_DECLARE.source + '|' + AutoUseRegex.POD.source;
+        const removeRegex = RegExp(removePattern, 'g');
+
         const tokensInFullText = fullText
-            .replace(AutoUseRegex.COMMENT, '')
-            .replace(AutoUseRegex.SUB, '')
-            .replace(AutoUseRegex.POD, '')
+            .replace(removeRegex, '')
             .split(AutoUseRegex.DELIMITER)
             .filter(s => s !== '') // guarantee the order hash_key => xxx
             .filter((token, idx, arr) =>
@@ -47,8 +48,8 @@ export class AutoUse extends UseBuilder {
             for (const dm of declaredModules) {
                 const includedInImports = importObjects.flat(1).map(io => io.packageName).includes(dm);
                 if (includedInImports) {
-                    const regex = `use ${dm};` + AutoUseRegex.NEW_LINE.source;
-                    await this.selector.deleteByRegex(RegExp(regex));
+                    const pattern = `use ${dm};` + AutoUseRegex.NEW_LINE.source;
+                    await this.selector.deleteByRegex(RegExp(pattern));
                 }
             }
         })();

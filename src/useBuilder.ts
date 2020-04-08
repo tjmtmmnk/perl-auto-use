@@ -46,8 +46,8 @@ export class UseBuilder {
 
             if (alreadyDeclaredModuleSub.length > 0) {
                 // to remove new line
-                const regex = AutoUseRegex.USE_SUB.source + AutoUseRegex.NEW_LINE.source;
-                await this.selector.deleteByRegex(RegExp(regex, 'g'));
+                const pattern = AutoUseRegex.USE_SUB.source + AutoUseRegex.NEW_LINE.source;
+                await this.selector.deleteByRegex(RegExp(pattern, 'g'));
             }
             if (useStatement !== '') {
                 useStatements.push(useStatement);
@@ -61,8 +61,8 @@ export class UseBuilder {
         const ascUseStatements = useStatements.sort();
 
         // to remove new line
-        const regex = AutoUseRegex.USE_AND_SUB.source + AutoUseRegex.NEW_LINE.source;
-        await this.selector.deleteByRegex(RegExp(regex, 'g'));
+        const pattern = AutoUseRegex.USE_AND_SUB.source + AutoUseRegex.NEW_LINE.source;
+        await this.selector.deleteByRegex(RegExp(pattern, 'g'));
 
         await this.selector.insertUseStatements(ascUseStatements);
     }
