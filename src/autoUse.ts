@@ -25,6 +25,7 @@ export class AutoUse extends UseBuilder {
 
         const tokensInFullText = fullText
             .replace(AutoUseRegex.COMMENT, '')
+            .replace(AutoUseRegex.SUB, '')
             .split(AutoUseRegex.DELIMITER)
             .filter(s => s !== '') // guarantee the order hash_key => xxx
             .filter((token, idx, arr) =>

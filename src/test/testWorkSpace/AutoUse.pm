@@ -33,5 +33,9 @@ sub walk {
     args my $class => 'Class',
          my $stride => 'Int',
     ;
-    print('args is duplicate. so not used')
+    print 'args is duplicate. so not used';
+}
+
+sub nyaa {
+    print 'sub is ignored';
 }
