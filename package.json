@@ -5,10 +5,15 @@
 	"publisher": "tjmtmmnk",
 	"version": "0.3.0",
 	"engines": {
-		"vscode": "^1.42.0"
+		"vscode": "^1.43.0"
 	},
 	"categories": [
 		"Other"
+	],
+	"keywords": [
+		"perl",
+		"AutoComplete",
+		"auto import"
 	],
 	"author": {
 		"name": "tjmtmmnk"
