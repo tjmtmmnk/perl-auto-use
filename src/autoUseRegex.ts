@@ -10,7 +10,7 @@ export class AutoUseRegex {
 
     // e.g) sub hoge_fuga {}
     // not match private function start from '_' e.g. sub _hoge {}
-    static readonly SUB_DECLARE = /sub (([a-z0-9][a-z0-9_]+))(\s*\{)/g;
+    static readonly SUB_DECLARE = /sub (([a-z0-9][a-z0-9_]+))/g;
 
     // e.g) package Hoge::Fuga;
     static readonly PACKAGE = /package ([A-Za-z0-9:]+);/;
@@ -29,8 +29,6 @@ export class AutoUseRegex {
     // e.g) Hoge::Fuga::bar;
     static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)::([a-z0-9_]+)(\(|;)/g;
 
-    static readonly SUB = /sub [a-z0-9_]+/g;
-
     static readonly DELIMITER = /\s|\(|\)|;|,|\{|\}|\[|\]/g;
 
     static readonly COMMENT = /#.*(\n|\r\n)/g;
@@ -40,4 +38,6 @@ export class AutoUseRegex {
     static readonly EXACT_MATCH_WORD_DECLARE = /^(use|my|our|local|sub|package)$/;
 
     static readonly NEW_LINE = /(\n|\r|\r\n)/;
+
+    static readonly POD = /=(head|pod|encoding)[\s\S]*=cut/g;
 }
