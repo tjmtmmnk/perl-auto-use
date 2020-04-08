@@ -15,3 +15,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - changed where to insert use statement
   - insert after last use statement
 - sort use statements ascending
+
+## Version 0.4.0
+- improve idempotency
+  - you can exec auto use command even if use statements has already exist
+- fix unintended handling of code action
+- ignore POD
