@@ -67,13 +67,12 @@ export class Selector {
         return [... new Set(methodModules.concat(subModules))].sort();
     }
 
-    public getDeclaredModule(): string[] {
+    public getUseModules(): string[] {
         const fullText = this.getFullText();
-        const useMatches = [...fullText.matchAll(AutoUseRegex.USE)];
-        return useMatches.map(um => um[1]);
+        return [...fullText.matchAll(AutoUseRegex.USE)].map(um => um[1]);
     }
 
-    public getDeclaredModuleSub(): ModuleSubObject[] {
+    public getUseModuleSubs(): ModuleSubObject[] {
         const fullText = this.getFullText();
         const useSubMatches = [...fullText.matchAll(AutoUseRegex.USE_SUB)];
 
@@ -93,6 +92,11 @@ export class Selector {
         });
     }
 
+    public getAllModules(): string[] {
+        const fullText = this.getFullText();
+        return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[1]);
+    }
+
     public getAllUseStatements(): string[] {
         const fullText = this.getFullText();
         return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[0]);
@@ -101,7 +105,7 @@ export class Selector {
     public async deleteByRegex(regex: RegExp): Promise<boolean> {
         const ranges = this.getRangesByRegex(regex);
 
-        if (ranges === []) { return Promise.reject(false); }
+        if (ranges === []) { return Promise.resolve(false); }
 
         return this.context.editor.edit(e => ranges.forEach(range => e.delete(range)));
     }

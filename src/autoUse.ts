@@ -6,12 +6,12 @@ import { UseBuilder } from './useBuilder';
 
 export class AutoUse extends UseBuilder {
     private async insertFullyQualifiedModule(): Promise<boolean> {
-        const declaredUse = this.selector.getDeclaredModule();
+        // check simple use and use-sub
+        const declaredModules = this.selector.getAllModules();
+
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
 
-        const notDeclaredModule = declaredUse === undefined
-            ? fullyQualifiedModules
-            : fullyQualifiedModules.filter(fqm => !declaredUse.includes(fqm));
+        const notDeclaredModule = fullyQualifiedModules.filter(fqm => !declaredModules.includes(fqm));
 
         const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
 
@@ -20,26 +20,37 @@ export class AutoUse extends UseBuilder {
         return this.selector.insertUseStatements(useStatements);
     }
 
-    private async insetLibraryModule(): Promise<boolean> {
+    private async insertLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
         const tokensInFullText = fullText
             .replace(AutoUseRegex.COMMENT, '')
+            .replace(AutoUseRegex.SUB, '')
             .split(AutoUseRegex.DELIMITER)
             .filter(s => s !== '') // guarantee the order hash_key => xxx
             .filter((token, idx, arr) =>
                 idx + 1 < arr.length &&
                 arr[idx + 1] !== '=>' &&
                 RegExp(AutoUseRegex.EXACT_MATCH_WORD_LOWER_CASE).test(token) && // This filter variable symbol $@%
-                !RegExp(AutoUseRegex.DECLARE).test(token)
+                !RegExp(AutoUseRegex.EXACT_MATCH_WORD_DECLARE).test(token)
             );
 
         const uniqueTokensInFullText = new Set<string>(tokensInFullText);
-        const importObjects = [...uniqueTokensInFullText]
-            .map(ut => DB.findByName(ut));
+        const importObjects = [...uniqueTokensInFullText].map(ut => DB.findByName(ut));
 
-        const declaredModuleSub = this.selector.getDeclaredModuleSub();
-        const alreadyDeclaredSubList = declaredModuleSub.flatMap(dms => dms.subList);
+        const declaredModules = this.selector.getUseModules();
+        const alreadyDeclaredSubList = this.selector.getUseModuleSubs().flatMap(ums => ums.subList);
+
+        // delete simple use if use-sub is exist
+        await (async () => {
+            for (const dm of declaredModules) {
+                const includedInImports = importObjects.flat(1).map(io => io.packageName).includes(dm);
+                if (includedInImports) {
+                    const regex = `use ${dm};` + AutoUseRegex.NEW_LINE.source;
+                    await this.selector.deleteByRegex(RegExp(regex));
+                }
+            }
+        })();
 
         const notDuplicateImportObjects = importObjects
             .filter(objects => objects.length === 1)
@@ -55,12 +66,12 @@ export class AutoUse extends UseBuilder {
             }
         });
 
-        return this.insertUseStatementByImportObjects(notDuplicateImportObjects);
+        return this.insertUseSubByImportObjects(notDuplicateImportObjects);
     }
 
     public async insertModules(): Promise<void> {
         await this.insertFullyQualifiedModule();
-        await this.insetLibraryModule();
+        await this.insertLibraryModule();
         await this.sortUseStatements();
     }
 }

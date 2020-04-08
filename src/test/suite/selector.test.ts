@@ -31,8 +31,8 @@ suite('Selector Test', () => {
         ], 'get fullyQualifiedModules sort by asc');
     });
 
-    test('getDeclaredModule', () => {
-        const declaredModule = selector.getDeclaredModule().sort();
+    test('getModules', () => {
+        const declaredModule = selector.getUseModules().sort();
         assert.deepStrictEqual(declaredModule, [
             'Nanimonai',
             'Nothing',
@@ -42,8 +42,8 @@ suite('Selector Test', () => {
         ], 'get declared module not having subs');
     });
 
-    test('getDeclaredModuleSub', () => {
-        const declaredModuleSub = selector.getDeclaredModuleSub().sort((a, b) => a.packageName > b.packageName ? 1 : -1);
+    test('getModuleSubs', () => {
+        const declaredModuleSub = selector.getUseModuleSubs().sort((a, b) => a.packageName > b.packageName ? 1 : -1);
         assert.deepStrictEqual(declaredModuleSub, [
             {
                 packageName: 'Empty',

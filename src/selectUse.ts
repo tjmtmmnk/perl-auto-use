@@ -16,7 +16,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
         super(context);
 
         const insertSelectUseCommand = vscode.commands.registerCommand(COMMAND_INSERT_SELECT_USE, async (importObjects: ImportObject[]) => {
-            await this.insertUseStatementByImportObjects(importObjects);
+            await this.insertUseSubByImportObjects(importObjects);
             await this.sortUseStatements();
         });
 
@@ -51,7 +51,7 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
     private canHandle(importObjects: ImportObject[]): boolean {
         if (importObjects.length <= 1) { return false; }
 
-        const declaredModuleSub = this.selector.getDeclaredModuleSub();
+        const declaredModuleSub = this.selector.getUseModuleSubs();
 
         if (declaredModuleSub.length === 0) { return true; }
 
