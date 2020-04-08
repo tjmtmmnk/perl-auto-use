@@ -6,6 +6,7 @@ import { UseBuilder } from './useBuilder';
 
 export class AutoUse extends UseBuilder {
     private async insertFullyQualifiedModule(): Promise<boolean> {
+        // check simple use and use-sub
         const declaredModules = this.selector.getAllModules();
 
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
@@ -30,7 +31,7 @@ export class AutoUse extends UseBuilder {
                 idx + 1 < arr.length &&
                 arr[idx + 1] !== '=>' &&
                 RegExp(AutoUseRegex.EXACT_MATCH_WORD_LOWER_CASE).test(token) && // This filter variable symbol $@%
-                !RegExp(AutoUseRegex.DECLARE).test(token)
+                !RegExp(AutoUseRegex.EXACT_MATCH_WORD_DECLARE).test(token)
             );
 
         const uniqueTokensInFullText = new Set<string>(tokensInFullText);
@@ -39,6 +40,7 @@ export class AutoUse extends UseBuilder {
         const declaredModules = this.selector.getUseModules();
         const alreadyDeclaredSubList = this.selector.getUseModuleSubs().flatMap(ums => ums.subList);
 
+        // delete simple use if use-sub is exist
         await (async () => {
             for (const dm of declaredModules) {
                 const includedInImports = importObjects.flat(1).map(io => io.packageName).includes(dm);
