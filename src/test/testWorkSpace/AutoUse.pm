@@ -39,3 +39,11 @@ sub walk {
 sub nyaa {
     print 'sub is ignored';
 }
+
+=encoding utf-8
+
+=head1 NAME
+
+=head1 SYNOPSIS
+    podnyaa
+=cut
