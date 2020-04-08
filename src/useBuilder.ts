@@ -1,3 +1,4 @@
+import { AutoUseRegex } from './autoUseRegex';
 import { AutoUseContext } from './autoUseContext';
 import { ImportObject } from './db';
 import { Selector } from './selector';
@@ -45,7 +46,7 @@ export class UseBuilder {
 
             if (alreadyDeclaredModuleSub.length > 0) {
                 // to remove new line
-                const regex = `use ${packageName} qw\(.*\);(\n|\r\n)`;
+                const regex = AutoUseRegex.USE_SUB.source + AutoUseRegex.NEW_LINE.source;
                 await this.selector.deleteByRegex(RegExp(regex, 'g'));
             }
             if (useStatement !== '') {
@@ -60,7 +61,8 @@ export class UseBuilder {
         const ascUseStatements = useStatements.sort();
 
         // to remove new line
-        await this.selector.deleteByRegex(/use ([A-Z][a-z0-9]*(::)?)+.*;(\n|\r\n)/g);
+        const regex = AutoUseRegex.USE_AND_SUB.source + AutoUseRegex.NEW_LINE.source;
+        await this.selector.deleteByRegex(RegExp(regex, 'g'));
 
         await this.selector.insertUseStatements(ascUseStatements);
     }

@@ -36,4 +36,6 @@ export class AutoUseRegex {
     static readonly EXACT_MATCH_WORD_LOWER_CASE = /^[a-z0-9_]+$/;
 
     static readonly DECLARE = /^(use|my|our|local|sub|package)$/;
+
+    static readonly NEW_LINE = /(\n|\r|\r\n)/;
 }

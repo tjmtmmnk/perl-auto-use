@@ -34,19 +34,20 @@ export class AutoUse extends UseBuilder {
             );
 
         const uniqueTokensInFullText = new Set<string>(tokensInFullText);
-        const importObjects = [...uniqueTokensInFullText]
-            .map(ut => DB.findByName(ut));
+        const importObjects = [...uniqueTokensInFullText].map(ut => DB.findByName(ut));
 
         const declaredModules = this.selector.getUseModules();
         const alreadyDeclaredSubList = this.selector.getUseModuleSubs().flatMap(ums => ums.subList);
 
-        await Promise.all(declaredModules.map(async dm => {
-            const includedInImportObject = importObjects.flat(1).map(io => io.packageName).includes(dm);
-            if (includedInImportObject) {
-                return this.selector.deleteByRegex(RegExp(`use ${dm};(\n|\r\n)`));
+        await (async () => {
+            for (const dm of declaredModules) {
+                const includedInImports = importObjects.flat(1).map(io => io.packageName).includes(dm);
+                if (includedInImports) {
+                    const regex = `use ${dm};` + AutoUseRegex.NEW_LINE.source;
+                    await this.selector.deleteByRegex(RegExp(regex));
+                }
             }
-            return Promise.resolve(false);
-        }));
+        })();
 
         const notDuplicateImportObjects = importObjects
             .filter(objects => objects.length === 1)

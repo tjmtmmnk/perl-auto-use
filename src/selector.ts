@@ -69,8 +69,7 @@ export class Selector {
 
     public getUseModules(): string[] {
         const fullText = this.getFullText();
-        const useMatches = [...fullText.matchAll(AutoUseRegex.USE)];
-        return useMatches.map(um => um[1]);
+        return [...fullText.matchAll(AutoUseRegex.USE)].map(um => um[1]);
     }
 
     public getUseModuleSubs(): ModuleSubObject[] {
@@ -106,7 +105,7 @@ export class Selector {
     public async deleteByRegex(regex: RegExp): Promise<boolean> {
         const ranges = this.getRangesByRegex(regex);
 
-        if (ranges === []) { return Promise.reject(false); }
+        if (ranges === []) { return Promise.resolve(false); }
 
         return this.context.editor.edit(e => ranges.forEach(range => e.delete(range)));
     }
