@@ -21,3 +21,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - you can exec auto use command even if use statements has already exist
 - fix unintended handling of code action
 - ignore POD
+
+## Version 0.5.0
+- fix problem
+  - deleted use statements unintendedly
