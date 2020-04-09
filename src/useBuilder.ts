@@ -28,7 +28,6 @@ export class UseBuilder {
 
         for (const packageName of Object.keys(packageNameToImportObjects)) {
             const alreadyDeclaredModuleSub = declaredModuleSub.filter(dus => dus.packageName === packageName);
-
             const alreadyDeclaredSubList = alreadyDeclaredModuleSub.length > 0
                 ? alreadyDeclaredModuleSub[0].subList
                 : [];
@@ -46,7 +45,7 @@ export class UseBuilder {
 
             if (alreadyDeclaredModuleSub.length > 0) {
                 // to remove new line
-                const pattern = `use ${packageName}\s*qw\(.*\);(\n|\r\n)`;
+                const pattern = `use ${packageName}\\s*qw\\(.*\\);(\\n|\\r\\n)`;
                 await this.selector.deleteByRegex(RegExp(pattern));
             }
             if (useStatement !== '') {
