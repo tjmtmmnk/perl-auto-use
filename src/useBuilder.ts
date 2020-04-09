@@ -46,8 +46,8 @@ export class UseBuilder {
 
             if (alreadyDeclaredModuleSub.length > 0) {
                 // to remove new line
-                const pattern = AutoUseRegex.USE_SUB.source + AutoUseRegex.NEW_LINE.source;
-                await this.selector.deleteByRegex(RegExp(pattern, 'g'));
+                const pattern = `use ${packageName}\s*qw\(.*\);(\n|\r\n)`;
+                await this.selector.deleteByRegex(RegExp(pattern));
             }
             if (useStatement !== '') {
                 useStatements.push(useStatement);

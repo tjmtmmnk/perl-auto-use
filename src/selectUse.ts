@@ -31,9 +31,13 @@ export class SelectUse extends UseBuilder implements vscode.CodeActionProvider {
         }
 
         const selectText = document.getText(selection);
+
         if (selectText === '') { return; }
+
         const importObjects = DB.findByName(selectText);
+
         if (!this.canHandle(importObjects)) { return; }
+
         return this.actionHandler(importObjects);
     }
 
