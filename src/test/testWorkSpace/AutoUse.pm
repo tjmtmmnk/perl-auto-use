@@ -1,9 +1,7 @@
 package AutoUse;
-use strict;
-use warnings;
 use Hoge::Fuga;
 use Hoge::Piyo qw(create_piyo my_name piyo_piyo);
-use Smart::Args::TypeTiny qw(args_pos);
+use Smart::Args::TypeTiny qw(args args_pos);
 
 # check_type is not used
 sub new_from_name {
