@@ -25,6 +25,7 @@ sub new_from_name {
 sub song {
     Hoge::Fuga->song;
     Hoge::Piyo->pipi(p => 1);
+    Hoge::Piyo::pipi();
     Hoge::Nyo->pipi;
     my $sing = piyo_piyo(times => 2);
     my $name = my_name;

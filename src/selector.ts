@@ -11,7 +11,6 @@ interface ModuleSubObject {
 interface FullyQualifiedObject {
     packageName: string,
     sub: string,
-    type: string,
 }
 
 export class Selector {
@@ -69,8 +68,7 @@ export class Selector {
         const methodModules = methodModuleMatches.map(mmm => {
             return {
                 packageName: mmm[1],
-                sub: mmm[4],
-                type: 'method'
+                sub: mmm[4]
             };
         });
 
@@ -78,12 +76,16 @@ export class Selector {
         const subModules = subModuleMatches.map(smm => {
             return {
                 packageName: smm[1],
-                sub: smm[4],
-                type: 'subroutine'
+                sub: smm[4]
             };
-        });
+        })
+            .filter(sm =>
+                methodModules.filter(mm =>
+                    mm.packageName === sm.packageName && mm.sub === sm.sub
+                ).length === 0
+            );
 
-        return [... new Set(methodModules.concat(subModules))];
+        return methodModules.concat(subModules);
     }
 
     public getUseModules(): string[] {
