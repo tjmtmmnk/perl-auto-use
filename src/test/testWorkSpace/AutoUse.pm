@@ -1,6 +1,6 @@
 package AutoUse;
 use Hoge::Fuga;
-use Hoge::Piyo qw(create_piyo my_name piyo_piyo);
+use Hoge::Piyo qw(create_piyo my_name pipi piyo_piyo);
 use Smart::Args::TypeTiny qw(args args_pos);
 
 # check_type is not used
@@ -23,6 +23,7 @@ sub new_from_name {
 # check_rule is not used
 sub song {
     Hoge::Fuga->song;
+    Hoge::Piyo->pipi(p => 1);
     my $sing = piyo_piyo(times => 2);
     my $name = my_name;
 }

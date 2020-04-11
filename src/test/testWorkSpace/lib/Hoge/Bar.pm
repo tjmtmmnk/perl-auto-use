@@ -1,7 +1,7 @@
 package Hoge::Bar;
 
 use Exporter 'import';
-our @EXPORT = qw/args nyaa podnyaa/;
+our @EXPORT = qw/args nyaa podnyaa pipi/;
 
 sub args {
     print 'exported and be duplicate';
@@ -10,3 +10,5 @@ sub args {
 sub nyaa { }
 
 sub podnyaa {}
+
+sub pipi {}
