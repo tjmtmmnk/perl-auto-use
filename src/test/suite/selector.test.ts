@@ -27,7 +27,7 @@ suite('Selector Test', () => {
             .sort((a, b) => {
                 if (a.packageName > b.packageName) { return 1; }
                 if (a.packageName === b.packageName) {
-                    if (a.type > b.type) { return 1; }
+                    if (a.sub > b.sub) { return 1; }
                 }
                 return -1;
             });
@@ -35,23 +35,19 @@ suite('Selector Test', () => {
         assert.deepStrictEqual(fullyQualifiedModules, [
             {
                 packageName: 'Animal::Cat',
-                sub: 'nyaa',
-                type: 'method'
+                sub: 'nyaa'
             },
             {
                 packageName: 'Hoge::Bar',
-                sub: 'bar_method',
-                type: 'method'
+                sub: 'bar_method'
             },
             {
                 packageName: 'Hoge::Bar',
-                sub: 'bar_subroutine',
-                type: 'subroutine'
+                sub: 'bar_subroutine'
             },
             {
                 packageName: 'Human',
-                sub: 'waaa',
-                type: 'method'
+                sub: 'waaa'
             }
         ], 'get fullyQualifiedModules sort by asc');
     });
