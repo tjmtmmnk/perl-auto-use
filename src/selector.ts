@@ -8,6 +8,12 @@ interface ModuleSubObject {
     subList: string[],
 }
 
+interface FullyQualifiedObject {
+    packageName: string,
+    sub: string,
+    type: string,
+}
+
 export class Selector {
     constructor(private context: AutoUseContext) { }
 
@@ -52,7 +58,7 @@ export class Selector {
         return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(insertPosition, useStatement + "\n")));
     }
 
-    public getFullyQualifiedModules(): string[] {
+    public getFullyQualifiedModules(): FullyQualifiedObject[] {
         const fullText = this.getFullText();
 
         // avoid matching `use` and `package` statements for sub module match
@@ -60,28 +66,24 @@ export class Selector {
         const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
 
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
-        const methodModules = methodModuleMatches.map(mmm => mmm[1]);
+        const methodModules = methodModuleMatches.map(mmm => {
+            return {
+                packageName: mmm[1],
+                sub: mmm[4],
+                type: 'method'
+            };
+        });
 
         const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
-        const subModules = subModuleMatches.map(smm => smm[1]);
+        const subModules = subModuleMatches.map(smm => {
+            return {
+                packageName: smm[1],
+                sub: smm[4],
+                type: 'subroutine'
+            };
+        });
 
-        return [... new Set(methodModules.concat(subModules))].sort();
-    }
-
-    public getFullyQualifiedFunctions(): string[] {
-        const fullText = this.getFullText();
-
-        // avoid matching `use` and `package` statements for sub module match
-        const removePattern = concatPatterns([AutoUseRegex.PACKAGE.source, AutoUseRegex.USE.source]);
-        const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
-
-        const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
-        const methods = methodModuleMatches.map(mmm => mmm[4]);
-
-        const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
-        const subroutines = subModuleMatches.map(smm => smm[4]);
-
-        return [... new Set(methods.concat(subroutines))];
+        return [... new Set(methodModules.concat(subModules))];
     }
 
     public getUseModules(): string[] {

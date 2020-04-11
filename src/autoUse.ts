@@ -12,9 +12,11 @@ export class AutoUse extends UseBuilder {
 
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
 
-        const notDeclaredModule = fullyQualifiedModules.filter(fqm => !declaredModules.includes(fqm));
+        const notDeclaredModule = fullyQualifiedModules
+            .filter(fqm => !declaredModules.includes(fqm.packageName))
+            .sort((a, b) => a.packageName < b.packageName ? 1 : -1);
 
-        const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
+        const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us.packageName, undefined));
 
         if (useStatements === undefined) { return Promise.reject('some error'); }
 

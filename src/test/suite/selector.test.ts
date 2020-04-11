@@ -23,11 +23,36 @@ suite('Selector Test', () => {
     });
 
     test('getFullyQualifiedModules', () => {
-        const fullyQualifiedModules = selector.getFullyQualifiedModules();
+        const fullyQualifiedModules = selector.getFullyQualifiedModules()
+            .sort((a, b) => {
+                if (a.packageName > b.packageName) { return 1; }
+                if (a.packageName === b.packageName) {
+                    if (a.type > b.type) { return 1; }
+                }
+                return -1;
+            });
+
         assert.deepStrictEqual(fullyQualifiedModules, [
-            'Animal::Cat',
-            'Hoge::Bar',
-            'Human'
+            {
+                packageName: 'Animal::Cat',
+                sub: 'nyaa',
+                type: 'method'
+            },
+            {
+                packageName: 'Hoge::Bar',
+                sub: 'bar_method',
+                type: 'method'
+            },
+            {
+                packageName: 'Hoge::Bar',
+                sub: 'bar_subroutine',
+                type: 'subroutine'
+            },
+            {
+                packageName: 'Human',
+                sub: 'waaa',
+                type: 'method'
+            }
         ], 'get fullyQualifiedModules sort by asc');
     });
 
