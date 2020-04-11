@@ -33,6 +33,8 @@ export class AutoUseRegex {
 
     static readonly COMMENT = /#.*(\n|\r\n)/g;
 
+    static readonly STRING = /('[^'"]*')|("[^"]*")|(q(w|q)?(\(|\/)[^\)|\/]*(\)|\/))/g;
+
     static readonly EXACT_MATCH_WORD_LOWER_CASE = /^[a-z0-9_]+$/;
 
     static readonly EXACT_MATCH_WORD_DECLARE = /^(use|my|our|local|sub|package)$/;
