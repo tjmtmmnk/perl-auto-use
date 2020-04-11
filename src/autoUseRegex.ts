@@ -1,9 +1,9 @@
 export class AutoUseRegex {
     // e.g) @EXPORT = qw(hoge fuga);
-    static readonly EXPORT = /@EXPORT(\s*=\s*)qw(\/|\()((\s*\w+\s*)*)(\/|\));/;
+    static readonly EXPORT = /@EXPORT\s*=\s*([\w\s\(\)\/]+);/;
 
     // e.g) @EXPORT_OK = qw(hoge fuga);
-    static readonly EXPORT_OK = /@EXPORT_OK(\s*=\s*)qw(\/|\()((\s*\w+\s*)*)(\/|\));/;
+    static readonly EXPORT_OK = /@EXPORT_OK\s*=\s*([\w\s\(\)\/]+);/;
 
     // e.g) @EXPORT = get_public_functions;
     static readonly GET_PUBLIC_FUNCTIONS = /@EXPORT\s*=\s*get_public_functions\(?\)?;/;
