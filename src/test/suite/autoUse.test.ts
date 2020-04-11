@@ -46,19 +46,25 @@ suite('AutoUse Test', () => {
         const insertAfterUse = RegExp(/use warnings;\nuse Hoge::Fuga;/).test(fullText);
 
         const useStatementsOrder =
-            RegExp(/use Hoge::Fuga;\nuse Hoge::Piyo/).test(fullText) &&
+            RegExp(/use Hoge::Fuga;\nuse Hoge::Nyo;\nuse Hoge::Piyo/).test(fullText) &&
             RegExp(/use Hoge::Piyo[\s\w\(\)]+;\nuse Smart::Args::TypeTiny/).test(fullText);
 
         const suffixReference = !RegExp(/use HOGE;/).test(fullText);
         const ignored = !RegExp(/use Hoge::Bar/).test(fullText);
+
+        const notExportedFullyQualifiedSub = RegExp(/use Hoge::Nyo;/).test(fullText);
 
         assert.ok(insertAfterPackage, 'inserted after package statement when no use statement');
         assert.ok(insertAfterUse, 'inserted after last use statement');
         assert.ok(useStatementsOrder, 'sorted use statements asc');
         assert.ok(suffixReference, 'suffix reference is not used');
         assert.ok(ignored, 'ignored');
+        assert.ok(notExportedFullyQualifiedSub, 'not exported sub is not used');
 
-        const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
+        const okFullyQualifiedModule =
+            RegExp(/use Hoge::Fuga;/).test(fullText) &&
+            RegExp(/use Hoge::Nyo;/).test(fullText);
+
         const okLibraryModule =
             RegExp(/use Hoge::Piyo qw\(create_piyo my_name pipi piyo_piyo\)/).test(fullText) &&
             RegExp(/use Smart::Args::TypeTiny qw\(args_pos\)/).test(fullText) &&
