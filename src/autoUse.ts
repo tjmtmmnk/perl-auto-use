@@ -23,7 +23,11 @@ export class AutoUse extends UseBuilder {
     private async insertLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
-        const removePattern = AutoUseRegex.COMMENT.source + '|' + AutoUseRegex.SUB_DECLARE.source + '|' + AutoUseRegex.POD.source;
+        const removePattern = AutoUseRegex.COMMENT.source + '|'
+            + AutoUseRegex.SUB_DECLARE.source + '|'
+            + AutoUseRegex.STRING.source + '|'
+            + AutoUseRegex.POD.source;
+
         const removeRegex = RegExp(removePattern, 'g');
 
         const tokensInFullText = fullText
