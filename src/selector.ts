@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 import { AutoUseContext } from './autoUseContext';
-import { AutoUseRegex } from './autoUseRegex';
+import { AutoUseRegex, concatPatterns } from './autoUseRegex';
 
 interface ModuleSubObject {
     packageName: string,

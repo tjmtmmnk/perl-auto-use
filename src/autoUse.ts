@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
-import { AutoUseRegex } from './autoUseRegex';
+import { AutoUseRegex, concatPatterns } from './autoUseRegex';
+
 import { DB } from './db';
 import { UseBuilder } from './useBuilder';
 
@@ -23,10 +24,12 @@ export class AutoUse extends UseBuilder {
     private async insertLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
-        const removePattern = AutoUseRegex.COMMENT.source + '|'
-            + AutoUseRegex.SUB_DECLARE.source + '|'
-            + AutoUseRegex.STRING.source + '|'
-            + AutoUseRegex.POD.source;
+        const removePattern = concatPatterns([
+            AutoUseRegex.COMMENT.source,
+            AutoUseRegex.SUB_DECLARE.source,
+            AutoUseRegex.STRING.source,
+            AutoUseRegex.POD.source
+        ]);
 
         const removeRegex = RegExp(removePattern, 'g');
 

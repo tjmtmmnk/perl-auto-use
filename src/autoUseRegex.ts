@@ -43,3 +43,11 @@ export class AutoUseRegex {
 
     static readonly POD = /=(head|pod|encoding)[\s\S]*=cut/g;
 }
+
+export function concatPatterns(patterns: string[]): string {
+    let pattern = '';
+    for (let i = 0; i < patterns.length; i++) {
+        pattern += (i !== patterns.length - 1 ? patterns[i] + '|' : patterns[i]);
+    }
+    return pattern;
+}
