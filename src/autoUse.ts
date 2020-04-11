@@ -53,13 +53,13 @@ export class AutoUse extends UseBuilder {
         const importObjectsByToken = [... new Set<string>(tokensInFullText)]
             .map(ut => DB.findByName(ut));
 
-        const fullyQualifiedFunctions = this.selector.getFullyQualifiedModules();
+        const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
 
         // e.g) JSON::Types::number must be belong to JSON::Types
-        const importObjectsByFunctions = fullyQualifiedFunctions
-            .map(fqf => {
-                const objects = DB.findByName(fqf.sub);
-                const filteredObjects = objects.filter(object => object.packageName === fqf.packageName);
+        const importObjectsByFunctions = fullyQualifiedModules
+            .map(fqm => {
+                const objects = DB.findByName(fqm.sub);
+                const filteredObjects = objects.filter(object => object.packageName === fqm.packageName);
                 return filteredObjects;
             });
 
