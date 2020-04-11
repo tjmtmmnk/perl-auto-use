@@ -36,6 +36,15 @@ sub walk {
 
 sub nyaa {
     print 'sub is ignored';
+    print 'string nyaa is ignored';
+    qw(
+        ignore 
+        nyaa
+    );
+
+    q/nyaa ignore/;
+
+    qq(ignore nyaa);
 }
 
 =encoding utf-8

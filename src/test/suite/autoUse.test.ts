@@ -50,15 +50,13 @@ suite('AutoUse Test', () => {
             RegExp(/use Hoge::Piyo[\s\w\(\)]+;\nuse Smart::Args::TypeTiny/).test(fullText);
 
         const suffixReference = !RegExp(/use HOGE;/).test(fullText);
-        const ignoredSubroutine = !RegExp(/use Hoge::Bar/).test(fullText);
-        const ignoredPod = !RegExp(/use Hoge::Bar/).test(fullText);
+        const ignored = !RegExp(/use Hoge::Bar/).test(fullText);
 
         assert.ok(insertAfterPackage, 'inserted after package statement when no use statement');
         assert.ok(insertAfterUse, 'inserted after last use statement');
         assert.ok(useStatementsOrder, 'sorted use statements asc');
         assert.ok(suffixReference, 'suffix reference is not used');
-        assert.ok(ignoredSubroutine, 'if subroutine name is same to exported function, not used');
-        assert.ok(ignoredPod, 'ignored POD');
+        assert.ok(ignored, 'ignored');
 
         const okFullyQualifiedModule = RegExp(/Hoge::Fuga/).test(fullText);
         const okLibraryModule =
