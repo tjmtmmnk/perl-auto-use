@@ -25,3 +25,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## Version 0.5.0
 - fix problem
   - deleted use statements unintendedly
+
+## Version 0.6.0
+- fix problem
+  - took so much time to scan for many files
+  - string (e.g. `'string'`) was targeted to auto use
+  - fully qualified subroutine (e.g. `JSON::Types::number`) wasn't targeted to auto use
