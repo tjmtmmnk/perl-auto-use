@@ -56,7 +56,8 @@ export class Selector {
         const fullText = this.getFullText();
 
         // avoid matching `use` and `package` statements for sub module match
-        const fullTextExcludePackageAndUse = fullText.replace(AutoUseRegex.PACKAGE, '').replace(AutoUseRegex.USE, '');
+        const removePattern = concatPatterns([AutoUseRegex.PACKAGE.source, AutoUseRegex.USE.source]);
+        const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
 
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
         const methodModules = methodModuleMatches.map(mmm => mmm[1]);
@@ -65,6 +66,22 @@ export class Selector {
         const subModules = subModuleMatches.map(smm => smm[1]);
 
         return [... new Set(methodModules.concat(subModules))].sort();
+    }
+
+    public getFullyQualifiedFunctions(): string[] {
+        const fullText = this.getFullText();
+
+        // avoid matching `use` and `package` statements for sub module match
+        const removePattern = concatPatterns([AutoUseRegex.PACKAGE.source, AutoUseRegex.USE.source]);
+        const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
+
+        const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
+        const methods = methodModuleMatches.map(mmm => mmm[4]);
+
+        const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
+        const subroutines = subModuleMatches.map(smm => smm[4]);
+
+        return [... new Set(methods.concat(subroutines))];
     }
 
     public getUseModules(): string[] {
