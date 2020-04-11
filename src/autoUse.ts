@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
-import { AutoUseRegex } from './autoUseRegex';
+import { AutoUseRegex, concatPatterns } from './autoUseRegex';
+
 import { DB } from './db';
 import { UseBuilder } from './useBuilder';
 
@@ -11,9 +12,13 @@ export class AutoUse extends UseBuilder {
 
         const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
 
-        const notDeclaredModule = fullyQualifiedModules.filter(fqm => !declaredModules.includes(fqm));
+        const notDeclaredModule = fullyQualifiedModules
+            .filter(fqm => !declaredModules.includes(fqm.packageName))
+            .sort((a, b) => a.packageName > b.packageName ? 1 : -1)
+            .map(ms => ms.packageName);
 
-        const useStatements = notDeclaredModule.map(us => this.buildUseStatement(us, undefined));
+        const useStatements = [... new Set<string>(notDeclaredModule)]
+            .map(module => this.buildUseStatement(module, undefined));
 
         if (useStatements === undefined) { return Promise.reject('some error'); }
 
@@ -23,10 +28,12 @@ export class AutoUse extends UseBuilder {
     private async insertLibraryModule(): Promise<boolean> {
         const fullText = this.selector.getFullText();
 
-        const removePattern = AutoUseRegex.COMMENT.source + '|'
-            + AutoUseRegex.SUB_DECLARE.source + '|'
-            + AutoUseRegex.STRING.source + '|'
-            + AutoUseRegex.POD.source;
+        const removePattern = concatPatterns([
+            AutoUseRegex.COMMENT.source,
+            AutoUseRegex.SUB_DECLARE.source,
+            AutoUseRegex.STRING.source,
+            AutoUseRegex.POD.source
+        ]);
 
         const removeRegex = RegExp(removePattern, 'g');
 
@@ -41,10 +48,23 @@ export class AutoUse extends UseBuilder {
                 !RegExp(AutoUseRegex.EXACT_MATCH_WORD_DECLARE).test(token)
             );
 
-        const uniqueTokensInFullText = new Set<string>(tokensInFullText);
-        const importObjects = [...uniqueTokensInFullText].map(ut => DB.findByName(ut));
-
         const declaredModules = this.selector.getUseModules();
+
+        const importObjectsByToken = [... new Set<string>(tokensInFullText)]
+            .map(ut => DB.findByName(ut));
+
+        const fullyQualifiedModules = this.selector.getFullyQualifiedModules();
+
+        // e.g) JSON::Types::number must be belong to JSON::Types
+        const importObjectsByFunctions = fullyQualifiedModules
+            .map(fqm => {
+                const objects = DB.findByName(fqm.sub);
+                const filteredObjects = objects.filter(object => object.packageName === fqm.packageName);
+                return filteredObjects;
+            });
+
+        const importObjects = importObjectsByToken.concat(importObjectsByFunctions);
+
         const alreadyDeclaredSubList = this.selector.getUseModuleSubs().flatMap(ums => ums.subList);
 
         // delete simple use if use-sub is exist

@@ -10,3 +10,5 @@ sub args {
 sub nyaa { }
 
 sub podnyaa {}
+
+sub pipi {}

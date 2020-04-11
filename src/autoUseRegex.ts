@@ -24,7 +24,7 @@ export class AutoUseRegex {
     static readonly USE_AND_SUB = /use (([A-Z][a-z0-9]*(::)?)+)[\w\s\(\)]*;/g;
 
     // e.g) Hoge::Fuga->bar;
-    static readonly METHOD_MODULE = /(([A-Z][a-z0-9]*(::)?)+)->[a-z0-9_]+/g;
+    static readonly METHOD_MODULE = /(([A-Z][a-z0-9]*(::)?)+)->([a-z0-9_]+)/g;
 
     // e.g) Hoge::Fuga::bar;
     static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)::([a-z0-9_]+)(\(|;)/g;
@@ -42,4 +42,12 @@ export class AutoUseRegex {
     static readonly NEW_LINE = /(\n|\r|\r\n)/;
 
     static readonly POD = /=(head|pod|encoding)[\s\S]*=cut/g;
+}
+
+export function concatPatterns(patterns: string[]): string {
+    let pattern = '';
+    for (let i = 0; i < patterns.length; i++) {
+        pattern += (i !== patterns.length - 1 ? patterns[i] + '|' : patterns[i]);
+    }
+    return pattern;
 }

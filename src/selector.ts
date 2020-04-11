@@ -1,11 +1,16 @@
 import * as vscode from 'vscode';
 
 import { AutoUseContext } from './autoUseContext';
-import { AutoUseRegex } from './autoUseRegex';
+import { AutoUseRegex, concatPatterns } from './autoUseRegex';
 
 interface ModuleSubObject {
     packageName: string,
     subList: string[],
+}
+
+interface FullyQualifiedObject {
+    packageName: string,
+    sub: string,
 }
 
 export class Selector {
@@ -52,19 +57,35 @@ export class Selector {
         return this.context.editor.edit(e => useStatements.forEach(useStatement => e.insert(insertPosition, useStatement + "\n")));
     }
 
-    public getFullyQualifiedModules(): string[] {
+    public getFullyQualifiedModules(): FullyQualifiedObject[] {
         const fullText = this.getFullText();
 
         // avoid matching `use` and `package` statements for sub module match
-        const fullTextExcludePackageAndUse = fullText.replace(AutoUseRegex.PACKAGE, '').replace(AutoUseRegex.USE, '');
+        const removePattern = concatPatterns([AutoUseRegex.PACKAGE.source, AutoUseRegex.USE.source]);
+        const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
 
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
-        const methodModules = methodModuleMatches.map(mmm => mmm[1]);
+        const methodModules = methodModuleMatches.map(mmm => {
+            return {
+                packageName: mmm[1],
+                sub: mmm[4]
+            };
+        });
 
         const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
-        const subModules = subModuleMatches.map(smm => smm[1]);
+        const subModules = subModuleMatches.map(smm => {
+            return {
+                packageName: smm[1],
+                sub: smm[4]
+            };
+        })
+            .filter(sm =>
+                methodModules.filter(mm =>
+                    mm.packageName === sm.packageName && mm.sub === sm.sub
+                ).length === 0
+            );
 
-        return [... new Set(methodModules.concat(subModules))].sort();
+        return methodModules.concat(subModules);
     }
 
     public getUseModules(): string[] {

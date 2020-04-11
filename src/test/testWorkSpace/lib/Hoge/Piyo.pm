@@ -13,3 +13,5 @@ sub _args_pos {}
 sub my_name {
     print 'include declare token my';
 }
+
+sub pipi {}
