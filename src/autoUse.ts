@@ -32,7 +32,8 @@ export class AutoUse extends UseBuilder {
             AutoUseRegex.COMMENT.source,
             AutoUseRegex.SUB_DECLARE.source,
             AutoUseRegex.STRING.source,
-            AutoUseRegex.POD.source
+            AutoUseRegex.POD.source,
+            AutoUseRegex.HASH.source
         ]);
 
         const removeRegex = RegExp(removePattern, 'g');
