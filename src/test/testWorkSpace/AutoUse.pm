@@ -13,8 +13,12 @@ sub new_from_name {
     my $piyo = create_piyo;
 
     my $hash = {
-        types => 'types is exported but hash key',
+        type => 'type is exported but hash key',
     };
+
+    $hash->{type};
+    
+    $hash{type};
 
     for(HOGE->@*) {
         print $_;
@@ -27,7 +31,7 @@ sub song {
     Hoge::Piyo->pipi(p => 1);
     Hoge::Piyo::pipi();
     Hoge::Nyo->pipi;
-    my $sing = piyo_piyo(times => 2);
+    my $sing = [ map {piyo_piyo(times => $_)} (0..1) ];
     my $name = my_name;
 }
 
