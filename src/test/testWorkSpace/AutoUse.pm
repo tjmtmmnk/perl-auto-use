@@ -20,6 +20,10 @@ sub new_from_name {
     
     $hash{type};
 
+    $hash->{'type'};
+
+    $hash{$type};
+
     for(HOGE->@*) {
         print $_;
     }
