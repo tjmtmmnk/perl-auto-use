@@ -26,20 +26,9 @@ export class AutoUse extends UseBuilder {
     }
 
     private async insertLibraryModule(): Promise<boolean> {
-        const fullText = this.selector.getFullText();
-
-        const removePattern = concatPatterns([
-            AutoUseRegex.COMMENT.source,
-            AutoUseRegex.SUB_DECLARE.source,
-            AutoUseRegex.STRING.source,
-            AutoUseRegex.POD.source,
-            AutoUseRegex.HASH.source
-        ]);
-
-        const removeRegex = RegExp(removePattern, 'g');
+        const fullText = this.selector.getFilteredFullText();
 
         const tokensInFullText = fullText
-            .replace(removeRegex, '')
             .split(AutoUseRegex.DELIMITER)
             .filter(s => s !== '') // guarantee the order hash_key => xxx
             .filter((token, idx, arr) =>
