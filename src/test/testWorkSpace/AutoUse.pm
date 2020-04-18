@@ -6,17 +6,17 @@ use Hoge::Piyo qw(create_piyo my_name pipi piyo_piyo);
 use Smart::Args::TypeTiny qw(args args_pos);
 
 # check_type is not used
+# Comment::Ignore::nanimominai;
+# Comment::Ignore::MINAI;
+# Comment::Ignore->ignore;
 sub new_from_name {
     args_pos my $class => 'Class',
              my $name  => 'Str',
     ;
-
     my $piyo = create_piyo;
-
     my $hash = {
         type => 'type is exported but hash key',
     };
-
     $hash->{type};
     
     $hash{type};
@@ -50,7 +50,7 @@ sub walk {
 }
 
 sub nyaa {
-    print 'sub is ignored';
+    print 'String::Ignore->minai';
     print 'string nyaa is ignored';
     qw(
         ignore 
@@ -68,4 +68,5 @@ sub nyaa {
 
 =head1 SYNOPSIS
     podnyaa
+    Hoge::Ignore->minaipod
 =cut

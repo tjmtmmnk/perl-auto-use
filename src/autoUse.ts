@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { AutoUseRegex, concatPatterns } from './autoUseRegex';
+import { AutoUseRegex } from './autoUseRegex';
 
 import { DB } from './db';
 import { UseBuilder } from './useBuilder';
