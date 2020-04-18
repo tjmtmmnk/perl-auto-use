@@ -3,7 +3,7 @@
 	"displayName": "perl-auto-use",
 	"description": "scan perl modules and you can auto use.",
 	"publisher": "tjmtmmnk",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"engines": {
 		"vscode": "^1.44.0"
 	},
