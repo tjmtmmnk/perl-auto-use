@@ -36,7 +36,7 @@ export class AutoUseRegex {
 
     static readonly COMMENT = /#.*(\n|\r\n)/g;
 
-    static readonly STRING = /('[^'"]*')|("[^"]*")|(q(w|q)?(\(|\/)[^\)|\/]*(\)|\/))/g;
+    static readonly STRING = /('[^'"]*')|("[^"]*")|(q(w|q)?[\(\{\/\[<]([^\)\}\/\]>])*[\)\}\/\]>])/g;
 
     static readonly HASH = /\$\w+(->)?\{.+\}/g;
 

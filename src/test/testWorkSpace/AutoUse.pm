@@ -56,10 +56,11 @@ sub nyaa {
         ignore 
         nyaa
     );
-
-    q/nyaa ignore/;
-
+    q/ nyaa ignore /;
+    q{nyaa};
+    q[nyaa ignore];
     qq(ignore nyaa);
+    qw<nyaa ignore>;
 }
 
 =encoding utf-8
