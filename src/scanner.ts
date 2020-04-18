@@ -59,7 +59,7 @@ export class Scanner {
         let importObjects: ImportObject[] = [];
 
         const pushSubs = (subs: string[]) => {
-            subs.forEach(sub => {
+            for (const sub of subs) {
                 const object: ImportObject = {
                     name: sub,
                     packageName: packageName,
@@ -67,7 +67,7 @@ export class Scanner {
                     workspace: this.context.workspace
                 };
                 importObjects.push(object);
-            });
+            }
         };
 
         const exportPublicSubMatches = [...data.matchAll(AutoUseRegex.GET_PUBLIC_FUNCTIONS)];

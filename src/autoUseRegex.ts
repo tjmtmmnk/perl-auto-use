@@ -23,17 +23,20 @@ export class AutoUseRegex {
 
     static readonly USE_AND_SUB = /use (([A-Z][a-z0-9]*(::)?)+)[\w\s\(\)]*;/g;
 
-    // e.g) Hoge::Fuga->bar;
+    // e.g) Hoge::Fuga->bar
     static readonly METHOD_MODULE = /(([A-Z][a-z0-9]*(::)?)+)->([a-z0-9_]+)/g;
 
-    // e.g) Hoge::Fuga::bar;
-    static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)::([a-z0-9_]+)(\(|;)/g;
+    // e.g) Hoge::Fuga::bar
+    static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)::([a-z0-9_]+)/g;
+
+    // e.g) Hoge::Fuga::BAR
+    static readonly CONSTANT = /(([A-Z][a-z0-9]*(::)?)+)::([A-Z_]+[^\w-:])/g;
 
     static readonly DELIMITER = /\s|\(|\)|;|,|\{|\}|\[|\]/g;
 
     static readonly COMMENT = /#.*(\n|\r\n)/g;
 
-    static readonly STRING = /('[^'"]*')|("[^"]*")|(q(w|q)?(\(|\/)[^\)|\/]*(\)|\/))/g;
+    static readonly STRING = /('[^'"]*')|("[^"]*")|(q(w|q)?[\(\{\/\[<]([^\)\}\/\]>])*[\)\}\/\]>])/g;
 
     static readonly HASH = /\$\w+(->)?\{.+\}/g;
 

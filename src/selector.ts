@@ -13,6 +13,22 @@ interface FullyQualifiedObject {
     sub: string,
 }
 
+const DEFAULT_FILTER = [
+    AutoUseRegex.COMMENT.source,
+    AutoUseRegex.SUB_DECLARE.source,
+    AutoUseRegex.STRING.source,
+    AutoUseRegex.POD.source,
+    AutoUseRegex.HASH.source
+];
+
+// don't use STRING filter because it interferes with use sub
+const USE_SUB_FILTER = [
+    AutoUseRegex.COMMENT.source,
+    AutoUseRegex.SUB_DECLARE.source,
+    AutoUseRegex.POD.source,
+    AutoUseRegex.HASH.source
+];
+
 export class Selector {
     constructor(private context: AutoUseContext) { }
 
@@ -37,6 +53,14 @@ export class Selector {
         return this.context.editor.document.getText();
     }
 
+    public getFilteredFullText(filters?: string[]): string {
+        const fullText = this.getFullText();
+
+        const removePattern = filters ? concatPatterns(filters) : concatPatterns(DEFAULT_FILTER);
+
+        return fullText.replace(RegExp(removePattern, 'g'), '');
+    }
+
     public getSelectText(): string {
         const document = this.context.editor.document;
         if (document === undefined) { return ''; }
@@ -58,43 +82,49 @@ export class Selector {
     }
 
     public getFullyQualifiedModules(): FullyQualifiedObject[] {
-        const fullText = this.getFullText();
+        const fullText = this.getFilteredFullText();
 
         // avoid matching `use` and `package` statements for sub module match
         const removePattern = concatPatterns([AutoUseRegex.PACKAGE.source, AutoUseRegex.USE.source]);
         const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
 
+        const pushToModules = (moduleMatches: RegExpMatchArray[], modules: FullyQualifiedObject[]) => {
+            for (const mm of moduleMatches) {
+                const module = {
+                    packageName: mm[1],
+                    sub: mm[4] ? mm[4] : ''
+                };
+
+                // TODO: improve unique algorithm now O(n^2)
+                const exist = modules
+                    .filter(m => m.packageName === module.packageName && m.sub === module.sub)
+                    .length > 0;
+
+                if (!exist) {
+                    modules.push(module);
+                }
+            }
+        };
+
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
-        const methodModules = methodModuleMatches.map(mmm => {
-            return {
-                packageName: mmm[1],
-                sub: mmm[4]
-            };
-        });
-
         const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
-        const subModules = subModuleMatches.map(smm => {
-            return {
-                packageName: smm[1],
-                sub: smm[4]
-            };
-        })
-            .filter(sm =>
-                methodModules.filter(mm =>
-                    mm.packageName === sm.packageName && mm.sub === sm.sub
-                ).length === 0
-            );
+        const constMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.CONSTANT)];
 
-        return methodModules.concat(subModules);
+        let modules: FullyQualifiedObject[] = [];
+        pushToModules(methodModuleMatches, modules);
+        pushToModules(subModuleMatches, modules);
+        pushToModules(constMatches, modules);
+
+        return modules;
     }
 
     public getUseModules(): string[] {
-        const fullText = this.getFullText();
+        const fullText = this.getFilteredFullText();
         return [...fullText.matchAll(AutoUseRegex.USE)].map(um => um[1]);
     }
 
     public getUseModuleSubs(): ModuleSubObject[] {
-        const fullText = this.getFullText();
+        const fullText = this.getFilteredFullText(USE_SUB_FILTER);
         const useSubMatches = [...fullText.matchAll(AutoUseRegex.USE_SUB)];
 
         return useSubMatches.map(usm => {
@@ -114,12 +144,12 @@ export class Selector {
     }
 
     public getAllModules(): string[] {
-        const fullText = this.getFullText();
+        const fullText = this.getFilteredFullText(USE_SUB_FILTER);
         return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[1]);
     }
 
     public getAllUseStatements(): string[] {
-        const fullText = this.getFullText();
+        const fullText = this.getFilteredFullText(USE_SUB_FILTER);
         return [...fullText.matchAll(AutoUseRegex.USE_AND_SUB)].map(uas => uas[0]);
     }
 

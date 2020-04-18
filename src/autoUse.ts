@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { AutoUseRegex, concatPatterns } from './autoUseRegex';
+import { AutoUseRegex } from './autoUseRegex';
 
 import { DB } from './db';
 import { UseBuilder } from './useBuilder';
@@ -26,20 +26,9 @@ export class AutoUse extends UseBuilder {
     }
 
     private async insertLibraryModule(): Promise<boolean> {
-        const fullText = this.selector.getFullText();
-
-        const removePattern = concatPatterns([
-            AutoUseRegex.COMMENT.source,
-            AutoUseRegex.SUB_DECLARE.source,
-            AutoUseRegex.STRING.source,
-            AutoUseRegex.POD.source,
-            AutoUseRegex.HASH.source
-        ]);
-
-        const removeRegex = RegExp(removePattern, 'g');
+        const fullText = this.selector.getFilteredFullText();
 
         const tokensInFullText = fullText
-            .replace(removeRegex, '')
             .split(AutoUseRegex.DELIMITER)
             .filter(s => s !== '') // guarantee the order hash_key => xxx
             .filter((token, idx, arr) =>
@@ -87,11 +76,11 @@ export class AutoUse extends UseBuilder {
             .filter(objects => objects.length > 1)
             .flat(1);
 
-        duplicateImportObjects.forEach(dio => {
+        for (const dio of duplicateImportObjects) {
             if (!alreadyDeclaredSubList.includes(dio.name)) {
                 vscode.window.showWarningMessage(`${dio.name} is duplicated. Please solve individually`);
             }
-        });
+        }
 
         return this.insertUseSubByImportObjects(notDuplicateImportObjects);
     }
