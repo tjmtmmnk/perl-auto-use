@@ -31,3 +31,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - took so much time to scan for many files
   - string (e.g. `'string'`) was targeted to auto use
   - fully qualified subroutine (e.g. `JSON::Types::number`) wasn't targeted to auto use
+
+## Version 0.7.0
+- fix problem
+  - targeted to hash key
+  - targeted to a fully qualified subroutine in comment
+  - not targeted to fully qualified constant
