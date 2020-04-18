@@ -89,28 +89,34 @@ export class Selector {
         const removePattern = concatPatterns([AutoUseRegex.PACKAGE.source, AutoUseRegex.USE.source]);
         const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
 
+        const pushToModules = (moduleMatches: RegExpMatchArray[], modules: FullyQualifiedObject[]) => {
+            for (const moduleMatch of moduleMatches) {
+                const module = {
+                    packageName: moduleMatch[1],
+                    sub: moduleMatch[4] ? moduleMatch[4] : ''
+                };
+
+                // TODO: improve unique algorithm now O(n^2)
+                const exist = modules
+                    .filter(m => m.packageName === module.packageName && m.sub === module.sub)
+                    .length > 0;
+
+                if (!exist) {
+                    modules.push(module);
+                }
+            }
+        };
+
         const methodModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.METHOD_MODULE)];
-        const methodModules = methodModuleMatches.map(mmm => {
-            return {
-                packageName: mmm[1],
-                sub: mmm[4]
-            };
-        });
-
         const subModuleMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.SUB_MODULE)];
-        const subModules = subModuleMatches.map(smm => {
-            return {
-                packageName: smm[1],
-                sub: smm[4]
-            };
-        })
-            .filter(sm =>
-                methodModules.filter(mm =>
-                    mm.packageName === sm.packageName && mm.sub === sm.sub
-                ).length === 0
-            );
+        const constMatches = [...fullTextExcludePackageAndUse.matchAll(AutoUseRegex.CONSTANT)];
 
-        return methodModules.concat(subModules);
+        let modules: FullyQualifiedObject[] = [];
+        pushToModules(methodModuleMatches, modules);
+        pushToModules(subModuleMatches, modules);
+        pushToModules(constMatches, modules);
+
+        return modules;
     }
 
     public getUseModules(): string[] {

@@ -1,4 +1,5 @@
 package AutoUse;
+use Foo::Bar;
 use Hoge::Fuga;
 use Hoge::Nyo;
 use Hoge::Piyo qw(create_piyo my_name pipi piyo_piyo);
@@ -27,6 +28,8 @@ sub new_from_name {
     for(HOGE->@*) {
         print $_;
     }
+
+    Foo::Bar::WOO;
 }
 
 # check_rule is not used
