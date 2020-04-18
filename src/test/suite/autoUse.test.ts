@@ -46,7 +46,7 @@ suite('AutoUse Test', () => {
         const insertAfterUse = RegExp(/use warnings;\nuse Foo::Bar;/).test(fullText);
 
         const useStatementsOrder =
-            RegExp(/use Foo::Bar;\nuse Hoge::Fuga;\nuse Hoge::Nyo;\nuse Hoge::Piyo/).test(fullText) &&
+            RegExp(/use Foo::Bar;\nuse Hoge::Ao::WW;\nuse Hoge::Ao::XX;\nuse Hoge::Fuga;\nuse Hoge::Nyo;\nuse Hoge::Piyo/).test(fullText) &&
             RegExp(/use Hoge::Piyo[\s\w\(\)]+;\nuse Smart::Args::TypeTiny/).test(fullText);
 
         const suffixReference = !RegExp(/use HOGE;/).test(fullText);
