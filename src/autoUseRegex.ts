@@ -30,7 +30,7 @@ export class AutoUseRegex {
     static readonly SUB_MODULE = /(([A-Z][a-z0-9]*(::)?)+)::([a-z0-9_]+)/g;
 
     // e.g) Hoge::Fuga::BAR
-    static readonly CONSTANT = /(([A-Z][a-z0-9]*(::)?)+)::([A-Z0-9_]+[^\w])/g;
+    static readonly CONSTANT = /(([A-Z][a-z0-9]*(::)?)+)::([A-Z_]+[^\w])/g;
 
     static readonly DELIMITER = /\s|\(|\)|;|,|\{|\}|\[|\]/g;
 

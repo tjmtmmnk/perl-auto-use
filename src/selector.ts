@@ -55,10 +55,9 @@ export class Selector {
 
     public getFilteredFullText(filters?: string[]): string {
         const fullText = this.getFullText();
-        if (filters === undefined) {
-            filters = DEFAULT_FILTER;
-        }
-        const removePattern = concatPatterns(filters);
+
+        const removePattern = filters ? concatPatterns(filters) : concatPatterns(DEFAULT_FILTER);
+
         return fullText.replace(RegExp(removePattern, 'g'), '');
     }
 
@@ -90,10 +89,10 @@ export class Selector {
         const fullTextExcludePackageAndUse = fullText.replace(RegExp(removePattern, 'g'), '');
 
         const pushToModules = (moduleMatches: RegExpMatchArray[], modules: FullyQualifiedObject[]) => {
-            for (const moduleMatch of moduleMatches) {
+            for (const mm of moduleMatches) {
                 const module = {
-                    packageName: moduleMatch[1],
-                    sub: moduleMatch[4] ? moduleMatch[4] : ''
+                    packageName: mm[1],
+                    sub: mm[4] ? mm[4] : ''
                 };
 
                 // TODO: improve unique algorithm now O(n^2)

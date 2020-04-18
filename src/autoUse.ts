@@ -76,11 +76,11 @@ export class AutoUse extends UseBuilder {
             .filter(objects => objects.length > 1)
             .flat(1);
 
-        duplicateImportObjects.forEach(dio => {
+        for (const dio of duplicateImportObjects) {
             if (!alreadyDeclaredSubList.includes(dio.name)) {
                 vscode.window.showWarningMessage(`${dio.name} is duplicated. Please solve individually`);
             }
-        });
+        }
 
         return this.insertUseSubByImportObjects(notDuplicateImportObjects);
     }
