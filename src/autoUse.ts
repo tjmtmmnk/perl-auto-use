@@ -63,7 +63,7 @@ export class AutoUse extends UseBuilder {
                 const includedInImports = importObjects.flat(1).map(io => io.packageName).includes(dm);
                 if (includedInImports) {
                     const pattern = `use ${dm};` + AutoUseRegex.NEW_LINE.source;
-                    await this.selector.deleteByRegex(RegExp(pattern));
+                    await this.selector.deleteByRegex(RegExp(pattern, 'g'));
                 }
             }
         })();
