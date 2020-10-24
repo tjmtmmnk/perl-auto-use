@@ -18,13 +18,20 @@
                 ]
             },
             {
-                "selector": "class",
+                "selector": "typeLike",
                 "format": [
-                    "camelCase"
+                    "PascalCase"
                 ]
             },
             {
-                "selector": "variable",
+                "selector": "memberLike",
+                "format": [
+                    "camelCase",
+                    "UPPER_CASE"
+                ]
+            },
+            {
+                "selector": "variableLike",
                 "format": [
                     "camelCase",
                     "UPPER_CASE"
