@@ -23,6 +23,16 @@ vscode extention for perl auto use
     - Separate with white space
     - For cpan module and test module etc
 
+## Commands
+
+- `Scan perl module files`
+    - Scan Perl module files for subsequent auto-using.
+- `Auto use (exec after scanning)`
+    - Add module dependency declarations by `use` function.
+
+
+Check details by a gif animated image below:
+
 ## Sample
 ![test](https://user-images.githubusercontent.com/31027514/77447249-d178da80-6e32-11ea-860f-e982c8b0570e.gif)
 
